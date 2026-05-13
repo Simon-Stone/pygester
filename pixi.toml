@@ -14,8 +14,8 @@ watch = { cmd = [
     "--exclude='.pixi'", "--exclude='__pycache__'", "--exclude='*.pyc'",
     "--exclude='.egg-info'", "--exclude='_build'",
     "--exclude='.git'", "--exclude='.opencode/node_modules/'",
-    "--include='*.py'", "--include='*.md'", "--include='*.toml'",
-    "--include='*.json'", "--include='*.ipynb'", "--exclude='*'", "./", "/mnt/Workspace/DigestTechPaperSkill/Code"
+    "--include='*/'", "--include='*.py'", "--include='*.md'", "--include='*.toml'",
+    "--include='*.json'", "--include='*.ipynb'", "--include='*.sh'", "--exclude='*'", "./", "/mnt/Workspace/Pygester"
 ] }
 
 # Foffano
@@ -25,18 +25,18 @@ python scripts/process-pdf.py \
   --out runs/foffano-run
 """
 
-test-foffano-enrichment-on = """
+test-foffano-enrichment-true = """
 python scripts/process-pdf.py \
   'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
-  --out runs/foffano-fe-on \
-  --formula-enrichment on
+  --out runs/foffano-true \
+  --formula-enrichment true
 """
 
-test-foffano-enrichment-off = """
+test-foffano-enrichment-false = """
 python scripts/process-pdf.py \
   'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
-  --out runs/foffano-fe-off \
-  --formula-enrichment off
+  --out runs/foffano-false \
+  --formula-enrichment false
 """
 
 # Cortes
@@ -46,23 +46,23 @@ python scripts/process-pdf.py \
   --out runs/cortes-run
 """
 
-test-cortes-enrichment-on = """
+test-cortes-enrichment-true = """
 python scripts/process-pdf.py \
   'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
-  --out runs/cortes-fe-on \
-  --formula-enrichment on
+  --out runs/cortes-true \
+  --formula-enrichment true
 """
 
-test-cortes-enrichment-off = """
+test-cortes-enrichment-false = """
 python scripts/process-pdf.py \
   'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
-  --out runs/cortes-fe-off \
-  --formula-enrichment off
+  --out runs/cortes-false \
+  --formula-enrichment false
 """
 
 # A/B comparison
-ab-foffano = { depends-on = ["test-foffano-enrichment-off", "test-foffano-enrichment-on"] }
-ab-cortes = { depends-on = ["test-cortes-enrichment-off", "test-cortes-enrichment-on"] }
+ab-foffano = { depends-on = ["test-foffano-enrichment-false", "test-foffano-enrichment-true"] }
+ab-cortes = { depends-on = ["test-cortes-enrichment-false", "test-cortes-enrichment-true"] }
 
 # Cleanup
 clean = "rm -rf run run-foffano run-cortes runs"
@@ -76,3 +76,5 @@ pytest = ">=7.0.0"
 
 [pypi-dependencies]
 docling = ">=2.91.0"
+
+# gooberpants

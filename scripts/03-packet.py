@@ -1,5 +1,4 @@
 """Stage 03: Compose context-packet.json, MANIFEST.md, and final deliverables."""
-from __future__ import annotations
 
 import argparse
 import time

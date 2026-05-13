@@ -1,5 +1,4 @@
 """Stage 01: Parse PDF with Docling + rasterize pages."""
-from __future__ import annotations
 
 import argparse
 import shutil
@@ -16,7 +15,7 @@ SKILL_VERSION = "0.1.0"
 
 
 def _flag_on(value: str) -> bool:
-    return value == "on"
+    return value == "true"
 
 
 def parse_pdf(
@@ -133,9 +132,9 @@ def main() -> None:
     p = argparse.ArgumentParser(description="Stage 01: Parse PDF")
     p.add_argument("pdf", type=Path)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--formula-enrichment", choices=["on", "off"], default="off")
-    p.add_argument("--code-enrichment", choices=["on", "off"], default="off")
-    p.add_argument("--ocr", choices=["on", "off"], default="off")
+    p.add_argument("--formula-enrichment", choices=["true", "false"], default="false")
+    p.add_argument("--code-enrichment", choices=["true", "false"], default="false")
+    p.add_argument("--ocr", choices=["true", "false"], default="false")
     p.add_argument("--max-pages", type=int, default=None)
     p.add_argument("--dpi", type=int, default=200)
     p.add_argument("--cache", action="store_true")

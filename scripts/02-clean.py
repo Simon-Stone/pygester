@@ -1,5 +1,4 @@
 """Stage 02: Clean Docling output → paper.md + structured sidecars."""
-from __future__ import annotations
 
 import argparse
 import re

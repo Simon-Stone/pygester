@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Run all stages: 01-parse → 02-clean → 03-packet."""
-from __future__ import annotations
 
 import argparse
 import subprocess
@@ -13,9 +12,9 @@ def main() -> None:
     p = argparse.ArgumentParser(description="digest-technical-paper: full pipeline")
     p.add_argument("pdf", type=Path)
     p.add_argument("--out", type=Path, required=True)
-    p.add_argument("--formula-enrichment", choices=["on", "off"], default="off")
-    p.add_argument("--code-enrichment", choices=["on", "off"], default="off")
-    p.add_argument("--ocr", choices=["on", "off"], default="off")
+    p.add_argument("--formula-enrichment", choices=["true", "false"], default="false")
+    p.add_argument("--code-enrichment", choices=["true", "false"], default="false")
+    p.add_argument("--ocr", choices=["true", "false"], default="false")
     p.add_argument("--max-pages", type=int, default=None)
     p.add_argument("--dpi", type=int, default=200)
     p.add_argument("--cache", action="store_true")
