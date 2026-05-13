@@ -57,7 +57,9 @@ def main() -> None:
         check=True,
     )
 
-    print(f"[{time.strftime('%H:%M:%S')}] Total elapsed: {time.monotonic() - t0_total:.1f}s")
+    elapsed = time.monotonic() - t0_total
+    print(f"[{time.strftime('%H:%M:%S')}] Total elapsed: {elapsed:.1f}s")
+    print(f"[{time.strftime('%H:%M:%S')}] Pipeline complete")
 
 
 if __name__ == "__main__":
