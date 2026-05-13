@@ -1,0 +1,4 @@
+docling>=2.91.0
+PyMuPDF>=1.24.0
+pydantic>=2.8.0
+orjson>=3.10.0

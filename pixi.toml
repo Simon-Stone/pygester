@@ -1,0 +1,82 @@
+[workspace]
+authors = ["Thadryan <thadryan@protonmail.com>"]
+channels = ["conda-forge"]
+name = "DigestTechPaperSkill"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+check = "python -m py_compile scripts/*.py scripts/parsers/*.py"
+
+# Foffano
+test-foffano = """
+python scripts/process_pdf.py \
+  'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
+  --out run-foffano
+"""
+
+test-foffano-extract-only = """
+python scripts/process_pdf.py \
+  'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
+  --out run-foffano \
+  --extract-only
+"""
+
+test-foffano-enrichment-true = """
+python scripts/process_pdf.py \
+  'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
+  --out runs/foffano-fe-on \
+  --formula-enrichment on
+"""
+
+test-foffano-enrichment-false = """
+python scripts/process_pdf.py \
+  'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
+  --out runs/foffano-fe-off \
+  --formula-enrichment off
+"""
+
+# Cortes
+test-cortes = """
+python scripts/process_pdf.py \
+  'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
+  --out run-cortes
+"""
+
+test-cortes-extract-only = """
+python scripts/process_pdf.py \
+  'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
+  --out run-cortes \
+  --extract-only
+"""
+
+test-cortes-enrichment-true = """
+python scripts/process_pdf.py \
+  'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
+  --out runs/cortes-fe-on \
+  --formula-enrichment on
+"""
+
+test-cortes-enrichment-false = """
+python scripts/process_pdf.py \
+  'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
+  --out runs/cortes-fe-off \
+  --formula-enrichment off
+"""
+
+# A/B
+ab-foffano-enrichment = { depends-on = ["test-foffano-enrichment-false", "test-foffano-enrichment-true"] }
+ab-cortes-enrichment  = { depends-on = ["test-cortes-enrichment-false",  "test-cortes-enrichment-true"] }
+
+# Cleanup
+clean = "rm -rf run run-foffano run-cortes runs"
+
+[dependencies]
+python = ">=3.10,<3.13"
+pymupdf = ">=1.24.0"
+pydantic = ">=2.8.0"
+orjson = ">=3.10.0"
+pytest = ">=7.0.0"
+
+[pypi-dependencies]
+docling = ">=2.91.0"

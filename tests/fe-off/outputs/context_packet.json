@@ -1,0 +1,133 @@
+{
+  "paper_profile": {
+    "title": "Conformal Off-Policy Evaluation in Markov Decision Processes",
+    "authors": null,
+    "input_pdf_sha256": "b85a8bca89098e3f38a955f9c7a2fdf6dc40302ebb8e624441843b91e6522b0e",
+    "page_count": 1,
+    "parser": {
+      "name": "docling",
+      "version": "2.93.0",
+      "reported_page_count": 1,
+      "config": {
+        "do_formula_enrichment": false,
+        "do_table_structure": true,
+        "do_ocr": false
+      }
+    },
+    "tool_version": "0.4.0"
+  },
+  "canonical_text": {
+    "path": "artifacts/text/plaintext.txt"
+  },
+  "sections": [
+    {
+      "id": "sec-abstract",
+      "heading": "Abstract",
+      "level": 1,
+      "start_char": 60,
+      "end_char": 1246
+    },
+    {
+      "id": "sec-002",
+      "heading": "I. INTRODUCTION",
+      "level": 1,
+      "start_char": 1246,
+      "end_char": 5394
+    },
+    {
+      "id": "sec-003",
+      "heading": "II. RELATED WORK",
+      "level": 1,
+      "start_char": 5394,
+      "end_char": 7446
+    },
+    {
+      "id": "sec-004",
+      "heading": "B. Conformal Prediction (CP)",
+      "level": 2,
+      "start_char": 7446,
+      "end_char": 8301
+    },
+    {
+      "id": "sec-005",
+      "heading": "III. PRELIMINARIES",
+      "level": 1,
+      "start_char": 8301,
+      "end_char": 8320
+    },
+    {
+      "id": "sec-006",
+      "heading": "A. Off-policy evaluation in Markov Decision Processes",
+      "level": 2,
+      "start_char": 8320,
+      "end_char": 9605
+    },
+    {
+      "id": "sec-007",
+      "heading": "B. Standard Conformal Prediction",
+      "level": 2,
+      "start_char": 9605,
+      "end_char": 10975
+    },
+    {
+      "id": "sec-008",
+      "heading": "IV. CONFORMALIZED OFF-POLICY EVALUATION",
+      "level": 1,
+      "start_char": 10975,
+      "end_char": 11663
+    },
+    {
+      "id": "sec-009",
+      "heading": "A. Weighted conformal prediction",
+      "level": 2,
+      "start_char": 11663,
+      "end_char": 15219
+    },
+    {
+      "id": "sec-010",
+      "heading": "B. Selecting the score function",
+      "level": 2,
+      "start_char": 15219,
+      "end_char": 18868
+    },
+    {
+      "id": "sec-011",
+      "heading": "V. OFFLINE ESTIMATION OF THE LIKELIHOOD RATIOS",
+      "level": 1,
+      "start_char": 18868,
+      "end_char": 19037
+    },
+    {
+      "id": "sec-012",
+      "heading": "A. Monte-Carlo method",
+      "level": 2,
+      "start_char": 19037,
+      "end_char": 20526
+    },
+    {
+      "id": "sec-013",
+      "heading": "B. Empirical and gradient-based methods",
+      "level": 2,
+      "start_char": 20526,
+      "end_char": 22152
+    }
+  ],
+  "figures": [],
+  "tables": [],
+  "uncertainties": {
+    "quality_status": "warn",
+    "failures": [
+      "has_references",
+      "section_hierarchy_consistent"
+    ],
+    "notes": [
+      "Docling-backed parse; normalize stage currently conservative.",
+      "Stage 2.5 assigns hierarchy, abstract, references gates."
+    ]
+  },
+  "evidence_index": {
+    "original_pdf": "artifacts/original.pdf",
+    "pages_dir": "artifacts/pages/",
+    "parser_raw_json": "artifacts/parser/raw_output.json"
+  }
+}

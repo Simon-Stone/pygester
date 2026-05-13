@@ -1,0 +1,28 @@
+{
+  "timestamp_utc": "2026-05-13T12:42:59.759818+00:00",
+  "skill_version": "0.4.0",
+  "input_pdf": "assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf",
+  "input_pdf_sha256": "b85a8bca89098e3f38a955f9c7a2fdf6dc40302ebb8e624441843b91e6522b0e",
+  "artifacts_pdf_sha256": "b85a8bca89098e3f38a955f9c7a2fdf6dc40302ebb8e624441843b91e6522b0e",
+  "page_count_processed": 1,
+  "dpi": 200,
+  "max_pages": 1,
+  "cli_args": {
+    "max_pages": 1,
+    "dpi": 200,
+    "cache": false,
+    "formula_enrichment": "off",
+    "table_structure": "on",
+    "ocr": "off"
+  },
+  "parser": {
+    "name": "docling",
+    "version": "2.93.0",
+    "reported_page_count": 1,
+    "config": {
+      "do_formula_enrichment": false,
+      "do_table_structure": true,
+      "do_ocr": false
+    }
+  }
+}
