@@ -21,7 +21,7 @@ class DoclingParser:
         pdf_path: Path,
         max_pages: int | None = None,
         do_formula_enrichment: bool = True,
-        do_table_structure: bool = True,
+        do_code_enrichment: bool = False,
         do_ocr: bool = False,
     ) -> ParserOutput:
         try:
@@ -36,7 +36,8 @@ class DoclingParser:
         pipeline_options = PdfPipelineOptions()
         pipeline_options.do_ocr = do_ocr
         pipeline_options.do_formula_enrichment = do_formula_enrichment
-        pipeline_options.do_table_structure = do_table_structure
+        # Note: Docling doesn't have do_code_enrichment; table_structure defaults to True
+        pipeline_options.do_table_structure = True
 
         converter = DocumentConverter(
             format_options={
