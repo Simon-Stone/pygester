@@ -20,9 +20,6 @@ test-texify = { cmd = "python tests/texify_test.py", description = "Run Texify i
 # Default: pulls from /mnt/Workspace/Pygester/runs/ to runs/
 local-pull-runs = { cmd = "sh -c 'rsync -avz --delete \"${SRC:-/mnt/Workspace/Pygester/runs/}\" \"${DEST:-runs/}\"'", description = "Pull runs from server storage to local" }
 
-# Alternative explicit mounted version
-local-pull-runs-mounted = { cmd = "rsync -avz --delete /mnt/Workspace/Pygester/runs/ runs/", description = "Pull runs from mounted server path (explicit)" }
-
 watch = { cmd = [
     "watchexec", "-r",
     "rsync", "-avz", "--delete",
