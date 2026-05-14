@@ -10,7 +10,7 @@ Concrete next steps, ordered by what unblocks what. Based on the gap between cur
 
 **Cause:** `do_formula_enrichment` is not being set on Docling's `pipeline_options`. The current manifest shows `"config": {"do_ocr": false}` — that's the whole config.
 
-**Fix:** in `scripts/parsers/docling_parser.py`, set:
+**Fix:** in `src/parsers/docling_parser.py`, set:
 
 ```python
 pipeline_options.do_formula_enrichment = True
@@ -56,8 +56,8 @@ The sanity pass is already correctly demoting `Algorithm 1` from sections (good)
 **Spec ref:** §8.2.
 
 **Action:**
-- Delete `scripts/generate_summary.py` and `scripts/generate_translation.py`
-- Add `scripts/render_markdown.py` (or fold into `build_context_packet.py`)
+- Delete `src/generate_summary.py` and `src/generate_translation.py`
+- Add `src/render_markdown.py` (or fold into `build_context_packet.py`)
 - Render `outputs/paper.md` from `plaintext.txt` + `sections.json`:
   - YAML frontmatter with title, authors, source SHA, parser version, tool version
   - Section headings as `#`/`##`/`###` based on `level`
@@ -77,12 +77,12 @@ The scope-narrowing decisions killed translation as a built-in mode. `outputs/tr
 
 These are leftover from previous iterations and should go:
 
-- `scripts/parsers/mineru_parser.py` (MinerU dropped)
-- `scripts/extract_artifacts.py` (superseded by `parse_pdf.py`)
-- `scripts/consolidate_text.py` (superseded by `normalize.py`)
-- `scripts/enrich_structures.py` (superseded by `normalize.py` + sanity pass)
-- `scripts/generate_summary.py` (no LLM in scope)
-- `scripts/generate_translation.py` (no LLM in scope)
+- `src/parsers/mineru_parser.py` (MinerU dropped)
+- `src/extract_artifacts.py` (superseded by `parse_pdf.py`)
+- `src/consolidate_text.py` (superseded by `normalize.py`)
+- `src/enrich_structures.py` (superseded by `normalize.py` + sanity pass)
+- `src/generate_summary.py` (no LLM in scope)
+- `src/generate_translation.py` (no LLM in scope)
 - `SKILL.md` (this is a tool, not a Claude skill)
 - All `__pycache__` directories (gitignore them)
 

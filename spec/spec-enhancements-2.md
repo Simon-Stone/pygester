@@ -8,7 +8,7 @@ Add minimal pipeline logging using Python's `logging` stdlib. Goal: every run pr
 
 ## Logger setup
 
-In `scripts/common.py`, add a function called once at the start of each script:
+In `src/common.py`, add a function called once at the start of each script:
 
 ```python
 import logging

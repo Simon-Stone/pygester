@@ -10,7 +10,7 @@
 cd "$SLURM_SUBMIT_DIR"
 
 echo "Starting Foffano test (enrichment=false)..."
-pixi run python scripts/process-pdf.py \
+pixi run python src/process-pdf.py \
   'assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf' \
   --out runs/slurm-foffano-false \
   --formula-enrichment false \
@@ -18,7 +18,7 @@ pixi run python scripts/process-pdf.py \
   --ocr false
 
 echo "Starting Cortes test (enrichment=false)..."
-pixi run python scripts/process-pdf.py \
+pixi run python src/process-pdf.py \
   'assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf' \
   --out runs/slurm-cortes-false \
   --formula-enrichment false \

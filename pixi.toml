@@ -6,7 +6,7 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
-check = "python -m py_compile scripts/*.py scripts/parsers/*.py"
+check = "python -m py_compile src/*.py src/parsers/*.py"
 
 watch = { cmd = [
     "watchexec", "-r",

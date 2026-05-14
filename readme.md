@@ -22,9 +22,9 @@ That's the whole tool.
 ```bash
 git clone <repo>
 cd digest-technical-paper
-pixi install            # or: pip install -r scripts/requirements.txt
+pixi install            # or: pip install -r src/requirements.txt
 
-python scripts/process_pdf.py path/to/paper.pdf --out run/
+python src/process-pdf.py path/to/paper.pdf --out run/
 ```
 
 Outputs land in `run/outputs/`. Intermediate artifacts in `run/artifacts/`. Both gitignored.
@@ -81,6 +81,6 @@ PDF → Docling parse → normalize → section sanity pass → context packet
                   ↘ PyMuPDF text-layer check (OCR decision)
 ```
 
-The interesting code is in `scripts/normalize.py` and `scripts/section_sanity.py` — that's where parser quirks get fixed. Docling does the heavy lifting; we clean up after it.
+The interesting code is in `src/02-clean.py` and `src/03-packet.py` — that's where parser quirks get fixed. Docling does the heavy lifting; we clean up after it.
 
 Detailed schemas, contracts, and stage-by-stage behavior live in [`spec.md`](spec.md). This README is the user-facing overview; the spec is what you read if you're building or modifying the tool.

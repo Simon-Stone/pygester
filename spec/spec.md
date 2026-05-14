@@ -33,9 +33,9 @@ Defaults favor **fast triage**: no enrichment, no OCR. A run takes seconds, math
 For a "deep read" workflow, opt in:
 
 ```bash
-python scripts/03-packet.py paper.pdf --out runs/foo \
-  --formula-enrichment on \
-  --code-enrichment on
+python scripts/process-pdf.py paper.pdf --out runs/foo \
+  --formula-enrichment true \
+  --code-enrichment true
 ```
 
 A deep-read run takes minutes (multiple model loads + per-block inference) but produces LaTeX math and clean code blocks in `paper.md`.
@@ -63,9 +63,9 @@ Flags:
 
 | Flag | Default | Effect |
 |---|---|---|
-| `--formula-enrichment {on,off}` | off | Docling formula → LaTeX. Costs minutes per paper. |
-| `--code-enrichment {on,off}` | off | Docling code blocks → clean text + language tags. Costs minutes per paper. |
-| `--ocr {on,off}` | off | Docling OCR. Native-text PDFs don't need it. |
+| `--formula-enrichment {true,false}` | false | Docling formula → LaTeX. Costs minutes per paper. |
+| `--code-enrichment {true,false}` | false | Docling code blocks → clean text + language tags. Costs minutes per paper. |
+| `--ocr {true,false}` | false | Docling OCR. Native-text PDFs don't need it. |
 | `--max-pages N` | none | Process only first N pages (testing). |
 | `--dpi N` | 200 | Page raster DPI. |
 | `--cache` | off | Skip re-parse if input SHA matches existing manifest. |
@@ -88,22 +88,34 @@ OUT_DIR/
 ├── quality-report.json       # which gates passed, what's missing
 ├── pages/                    # one image per page
 │   └── page_0001.png …
-└── debug/
+├── visuals/                  # per-block crops (equations, figures, code)
+│   ├── equations/
+│   │   ├── equations.json
+│   │   └── equation_NNN.png …
+│   ├── figures/
+│   │   ├── figures.json
+│   │   └── figure_NNN.png …
+│   └── code/                 # only when code blocks found
+│       ├── code.json
+│       └── code_NNN.png …
+├── tables/                   # extracted tables (when present)
+│   └── tables.json
+├── references/               # extracted references (when present)
+│   └── references.json
+└── debug/                    # intermediate artifacts
     ├── original.pdf          # verbatim copy of input
     ├── run-manifest.json     # config, flags, hashes, timestamps
+    ├── run.log               # pipeline log
     ├── parser/
     │   ├── raw_output.json   # Docling DoclingDocument as JSON (large)
     │   └── raw_output.md     # Docling markdown export, pre-cleanup
-    ├── text/
-    │   ├── plaintext.txt     # cleaned canonical text
-    │   ├── sections.json     # section tree (already in context-packet)
-    │   └── provenance.json   # char-offset → page/bbox map
-    ├── markdown/             # intermediate snapshots from Stage 02 post-processing
-    │   └── 01-with-frontmatter.md …
-    ├── figures/figures.json
-    ├── tables/tables.json
-    ├── equations/equations.json
-    └── references/references.json
+    └── intermediate/
+        ├── text/
+        │   ├── plaintext.txt # cleaned canonical text
+        │   ├── sections.json # section tree (already in context-packet)
+        │   └── provenance.json # char-offset → page/bbox map
+        └── markdown/         # intermediate snapshots from Stage 02 post-processing
+            └── 01-with-frontmatter.md …
 ```
 
 Deliverables (the top of `OUT_DIR/`) use kebab-case. Debug files keep snake_case (Docling convention).
@@ -131,8 +143,10 @@ Tool version: `<version>` · Run at: `<ISO timestamp>` · Flags: `<flag summary>
 - **`context-packet.json`** — structured metadata: sections with page ranges,
   figures, tables, equations, references. The thing to paste alongside `paper.md`
   when an LLM needs to know what's on each page.
-- **`pages/page_NNNN.png`** — one rasterized image per page (<N> total).
-  Use these when you want to show an LLM what a figure or equation actually looks like.
+- **`visuals/`** — per-block crops: `equations/`, `figures/`, `code/`. Each has
+  a JSON manifest plus PNG crops. Visual ground truth for verification.
+- **`tables/`** — extracted tables as JSON (if any found).
+- **`references/`** — extracted references as JSON (if any found).
 - **`quality-report.json`** — quick summary of what's populated and what failed.
   Glance at this if `paper.md` looks weird.
 
@@ -147,21 +161,22 @@ something's wrong.
   per-stage timing.
 - `debug/parser/raw_output.{json,md}` — what Docling produced before our post-
   processing. Compare against `paper.md` to see what Stage 02 changed.
-- `debug/text/plaintext.txt` — canonical text without markdown formatting.
+- `debug/intermediate/text/plaintext.txt` — canonical text without markdown formatting.
   Redundant with `paper.md` for most uses.
-- `debug/markdown/` — intermediate snapshots from the markdown post-processing
+- `debug/intermediate/markdown/` — intermediate snapshots from the markdown post-processing
   chain. `01-with-frontmatter.md` is what `paper.md` looks like after only
   the first post-processing step, and so on.
-- `debug/{figures,tables,equations,references}/*.json` — structured artifacts
-  that get rolled into `context-packet.json`. Look here if the packet looks
-  incomplete.
+
+Artifacts that were previously under `debug/` (`figures.json`, `tables.json`,
+`equations.json`, `references.json`) now live at the top level (`visuals/`,
+`tables/`, `references/`) when populated.
 
 ## What was done to your paper
 
 - Docling version: `<X.Y.Z>`
-- Formula enrichment: `<on|off>` — <"math came through as LaTeX" | "math came through as flattened Unicode">
-- Code enrichment: `<on|off>` — <"code blocks cleaned" | "code blocks as raw text">
-- OCR: `<on|off>` — <"OCR ran" | "OCR skipped; PDF had a usable text layer">
+- Formula enrichment: `<true|false>` — <"math came through as LaTeX" | "math came through as flattened Unicode">
+- Code enrichment: `<true|false>` — <"code blocks cleaned" | "code blocks as raw text">
+- OCR: `<true|false>` — <"OCR ran" | "OCR skipped; PDF had a usable text layer">
 - Pages processed: `<N>` of `<M>`<br>
 - Sections detected: `<N>`
 - Figures detected: `<N>`
