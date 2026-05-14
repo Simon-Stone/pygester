@@ -1,3 +1,14 @@
+---
+title: Docling Extract
+source_sha256: b85a8bca89098e3f38a955f9c7a2fdf6dc40302ebb8e624441843b91e6522b0e
+parser: docling 2.93.0
+tool_version: 0.1.0
+run_at: 2026-05-14T17:17:56.976776+00:00
+formula_enrichment: true
+code_enrichment: false
+ocr: false
+---
+
 ## Conformal Off-Policy Evaluation in Markov Decision Processes
 
 Daniele Foffano ∗ , Alessio Russo ∗ and Alexandre Proutiere
@@ -52,7 +63,7 @@ In off-policy evaluation, we gather data using a behavior policy π b , and we w
 
 Conformal Prediction (CP) is a method for distributionfree uncertainty quantification of learning methods, see e.g. [30], [18], [11]. To illustrate how CP works, we consider classical supervised learning tasks and restrict our attention to split CP where the pre-training and the calibration phases are conducted on different datasets. The learner starts with a pretrained model ˆ f : X → Y that maps inputs to predicted labels (this model may also consist of upper and lower estimated quantiles if the pre-training procedure corresponds to quantile regression). She also has i.i.d. calibration data D cal = { X i , Y i } n i =1 i.i.d. ∼ P X,Y . From ˆ f and D cal , CP constructs for each possible input x a subset ˆ C n ( x ) of possible labels. More precisely, the method proceeds as follows: (i) first a score function s : X × Y → R is constructed from the model ˆ f (e.g., it could be the residuals | y -ˆ f ( x ) | if Y ⊂ R ); (ii) the scores of the various calibration samples are computed V i = s ( X i , Y i ) , and (iii) the confidence set is built according to ˆ C n ( x ) = { y ∈ Y : s ( x, y ) ≤ η } , where η = Quantile 1 -α ( 1 n +1 (∑ n i =1 δ V i + δ {∞} ) ) . If ( X 1 , Y 1 ) , . . . , ( X n +1 , Y n +1 ) are exchangeable, this construction ensures coverage with certainty level 1 -α :
 
-<!-- formula-not-decoded -->
+$$1 - \alpha \leq \mathbb { P } ( Y \in \hat { C } _ { n } ( X ) ) \leq 1 - \alpha + \frac { 1 } { n + 1 } .$$
 
 ## IV. CONFORMALIZED OFF-POLICY EVALUATION
 
@@ -62,7 +73,7 @@ Our objective is to get conformalized predictions for the value function of a po
 
 As suggested [28], [24], we can handle the distribution shift by weighing the scores using estimates of the likelihood ratio
 
-<!-- formula-not-decoded -->
+$$w ( x , y ) \coloneqq \frac { d P _ { X , Y } ^ { \pi } } { d P _ { X , Y } ^ { \pi ^ { b } } } ( x , y ) = \frac { d P _ { Y | X } ^ { \pi } } { d P _ { Y | X } ^ { \pi ^ { b } } } ( y | x ) ,$$
 
 Fig. 1. Conformal prediction for off-policy evaluation. The dataset D is collected using a behavior policy π b , which is then split into the training D tr and calibration D cal datasets. When evaluating a different policy π , there is a shift in the data distribution, and we need to learn a likelihood ratios ˆ w to compensate for this shift. The training data is used to learn estimates of the weights ˆ w and a model ˆ f used in the computation of the scores. The estimated weights are used as plug-in estimates to re-weight the cumulative distribution function of the scores ˆ F x,y n , which is then used to compute the conformalized intervals ˆ C n ( x ) .
 
@@ -70,27 +81,27 @@ Fig. 1. Conformal prediction for off-policy evaluation. The dataset D is collect
 
 where for any policy π ′ ∈ { π, π b } , P π ′ X,Y ( x, y ) = P π ′ Y | X ( y | x ) p ( x ) denotes the distribution of the observation ( X,Y ) under π ′ ( P π ′ Y | X is this distribution given X ), and p ( x ) is the initial state distribution, which is the same in both cases. The value of a given trajectory τ = { x 1 , a 1 , r 1 , . . . , x H , a H , r H } is y = ∑ H t =1 r t . For any policy π ′ ∈ { π, π b } , the probability of observing τ under π ′ given the initial state x 1 = x is:
 
-<!-- formula-not-decoded -->
+$$P ^ { \pi ^ { \prime } } ( \tau | x ) = & \pi ^ { \prime } ( a _ { 1 } | x ) q ( r _ { 1 } | x , a _ { 1 } ) \prod _ { t = 2 } ^ { H } \pi ^ { \prime } ( a _ { t } | x _ { t } ) \\ & \times T ( x _ { t } | x _ { t - 1 } , a _ { t - 1 } ) q ( r _ { t } | x _ { t } , a _ { t } ) . \\ \text {Hence the weights can be written as} \colon &$$
 
 Hence the weights can be written as:
 
-<!-- formula-not-decoded -->
+$$w ( x , y ) & = \frac { \int 1 _ { \{ y = \sum _ { t = 1 } ^ { H } r _ { t } \} } P ^ { \pi } ( \tau | x ) d \tau } { \int 1 _ { \{ y = \sum _ { t = 1 } ^ { H } r _ { t } \} } P ^ { \pi ^ { b } } ( \tau | x ) d \tau } . \\ \text {make the following assumption to guarantee that the above} \\ \text {rights are always well defined and that the calibration of}$$
 
 We make the following assumption to guarantee that the above weights are always well defined, and that the calibration data is i.i.d.
 
 Assumption 1: We assume throughout the paper that P π ( ·| x ) is absolutely continuous w.r.t. P π b ( ·| x ) for all x ∈ X . We further assume that calibration data D cal provides n i.i.d. samples ( X i , Y i ) ∼ P π b X,Y .
 
-<!-- formula-not-decoded -->
+$$\text {with} \quad & \quad \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \$$
 
 Then, we can compute the scores V i = s ( X i , Y i ) . For each possible pair ( x, y ) , using the normalized weights, we form the distribution ˆ F x,y n := ∑ n i =1 p w i ( x, y ) δ V i + p w n +1 ( x, y ) δ ∞ , with
 
 and the conformalized set
 
-<!-- formula-not-decoded -->
+$$\hat { C } _ { n } ( x ) \coloneqq \left \{ y \in \mathbb { R } \colon s ( x , y ) \leq \text {Quantile} _ { 1 - \alpha } \left ( \hat { F } _ { n } ^ { x , y } \right ) \right \} . \ \ ( 3 ) \quad ^ { 1 \text {Find} } _ { \substack { \text {com} / \text {dan} \\ \text {Conform} } }$$
 
 Proposition 1: Under Assumption 1, for any score function s and any α ∈ (0 , 1) ,
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] \geq 1 - \alpha , \\ \mathbb { P } ^ { b , \pi } \ a c c o u n t s \text { for the randomness of } ( X , Y ) \sim P _ { X , Y } ^ { \pi }$$
 
 where P π b ,π accounts for the randomness of ( X,Y ) ∼ P π X,Y and that of the data D cal = { X i , Y i } n i =1 (with for all i ∈ [ n ] , ( X i , Y i ) ∼ P π b X,Y ).
 
@@ -98,11 +109,11 @@ The proof of the proposition is similar to that of [24, Proposition 4.1], and is
 
 Proposition 2: Assume that the conformalized sets (3) are defined using estimated the weights ˆ w ( x, y ) satisfying E π b [ ˆ w ( X,Y ) r ] ≤ M r r &lt; ∞ for some r ≥ 2 . Define ∆ w = 1 2 E π b | ˆ w ( X,Y ) -w ( X,Y ) | . Then
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] & \geq 1 - \alpha - \Delta _ { w } , \\ \intertext { i n d d i t i o n , t h e n o n - c o n f o r m i t y s c o r e s }$$
 
 If, in addition, the non-conformity scores { V i } n i =1 have no ties almost surely, then we also have
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] & \leq 1 - \alpha + \Delta _ { w } + c n ^ { 1 / r - 1 } , \\ \intertext { f o r s o m e p o s i t i v e c o n s t a n t c d e p e n d i n g o n M _ { r } a n d r o n l y . }$$
 
 for some positive constant c depending on M r and r only.
 
@@ -110,7 +121,7 @@ for some positive constant c depending on M r and r only.
 
 The choice of the score function critically impacts the size and center of the conformalized sets ˆ C n ( x ) . In previous work [21], [24], the pre-training procedure outputs some estimated quantiles q α lo ( x ) and q α hi ( x ) for the value of the behavior policy with initial state x , and the use of the symmetric score function
 
-<!-- formula-not-decoded -->
+$$s ( x , y ) = \max ( q _ { \alpha _ { l o } } ( x ) - y , y - q _ { \alpha _ { l i } } ( x ) ) , \\$$
 
 is advocated. This choice yields a set ˆ C n ( x ) centered ¯ q π b ( x ) = ( q α lo ( x ) + q α hi ( x )) / 2 . Indeed, in view of (3) and (6), there is η ( x ) ∈ R such that ˆ C n ( x ) = [¯ q π b ( x ) -η ( x ) , ¯ q π b ( x ) + η ( x )] (note that when n grows large, η ( x ) becomes independent of x ). Having ˆ C n ( x ) centered on the estimated median value for π b is of course very problematic when the values of π b and π significantly differ. In this case, the length of ˆ C n ( x ) becomes unnecessarily large. Next we propose methods and score functions that efficiently re-center ˆ C n ( x ) around the value of π (instead of π b ), and that in turn yield much smaller conformalized sets.
 
@@ -122,23 +133,23 @@ Fig. 2. Symmetry problem. For the original confidence set with one single quanti
 
 1) Double-quantile score: a first idea is to break the symmetry of the score function used in [24] by considering the following confidence set
 
-<!-- formula-not-decoded -->
+$$\hat { C } _ { n } ( x ) \coloneqq \left \{ y \in \mathbb { R } \colon q _ { \alpha _ { 1 } } ( x ) - y \leq \text {Quantile} _ { 1 - \alpha / 2 } \left ( \hat { F } _ { n , 0 } ^ { x , y } \right ) \right \} \\ \cap \left \{ y \in \mathbb { R } \colon y - q _ { \alpha _ { 1 } } ( x ) \leq \text {Quantile} _ { 1 - \alpha / 2 } \left ( \hat { F } _ { n , 1 } ^ { x , y } \right ) \right \} , \quad \text {where } \pi ^ { n } \\ \substack { ( 7 ) & & P ^ { n } ( \tau | x )$$
 
 where ˆ F x,y n, 0 := ∑ n i =1 p w i ( x, y ) δ V i, 0 + p w n +1 ( x, y ) δ ∞ and ˆ F x,y n, 1 := ∑ n i =1 p w i ( x, y ) δ V i, 1 + p w n +1 ( x, y ) δ ∞ , with V i, 0 = q α lo ( X i ) -Y i and V i, 1 = Y i -q α hi ( X i ) . In essence, we separately look at the lower and upper quantiles of the shifted distribution of the scores. A graphical illustration is provided in Fig. 2. The new construction of ˆ C n ( x ) does not affect coverage guarantees:
 
 Proposition 3: Under Assumption 1, for α ∈ (0 , 1) the sets ˆ C n ( x ) in (7) satisfies
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] & \geq 1 - \alpha . \\ \text {also obtain the following guarantees in case } w ( x , y ) \\ \text {and by } \hat { w } ( x , y )$$
 
 We also obtain the following guarantees in case w ( x, y ) is replaced by ˆ w ( x, y ) .
 
 Proposition 4: Let ˆ C n ( x ) be as in (7) with weights w ( x, y ) replaced by ˆ w ( x, y ) . Under the same assumptions as in Proposition 2, we have
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] & \geq 1 - \alpha - \Delta _ { w } . \\ \intertext { a d d i t i o n , n o n - c o n f o r m i t y s c o r e s \ \{ V _ { i , 0 } \} _ { i = 1 } ^ { n } \ a n d \ \{ V _ { i , 1 } }$$
 
 If, in addition, non-conformity scores { V i, 0 } n i =1 and { V i, 1 } n i =1 have no ties almost surely, then we also have
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } , \pi } \left [ Y \in \hat { C } _ { n } ( X ) \right ] & \leq 1 - \alpha + \Delta _ { w } + c n ^ { 1 / r - 1 } , \\ \intertext { f o r s o m e p o s i t i v e c o n s t a n t c d e p e n d i n g o n l y o n M _ { r } a n d r . }$$
 
 for some positive constant c depending only on M r and r .
 
@@ -146,7 +157,7 @@ for some positive constant c depending only on M r and r .
 
 We may also combine this choice with the double-quantile idea and construct ˆ C n ( x ) as
 
-<!-- formula-not-decoded -->
+$$\hat { C } _ { n } ( x ) = \hat { C } _ { n , 0 } ( x ) \cap \hat { C } _ { n , 1 } ( x ) ,$$
 
 where ˆ C n, 0 = { y ∈ R : y ≥ Quantile α/ 2 ( ˆ F x,y n )} and ˆ C n, 1 = { y ∈ R : y ≤ Quantile 1 -α/ 2 ( ˆ F x,y n )} . Propositions 3 and 4 also hold for this choice.
 
@@ -158,14 +169,14 @@ In this section, we present various ways to estimate the likelihood ratios w ( x
 
 To estimate w ( x, y ) , we need to compute P π X,Y ( x, y ) and P π b X,Y ( x, y ) . Recall that the likelihood ratio is equal to
 
-<!-- formula-not-decoded -->
+$$w ( x , y ) = \frac { \int 1 _ { \{ y = \sum _ { t = 1 } ^ { H } r _ { t } \} } P ^ { \pi } ( \tau | x ) d \tau } { \int 1 _ { \{ y = \sum _ { t = 1 } ^ { H } r _ { t } \} } P ^ { \pi ^ { b } } ( \tau | x ) d \tau } , \\ \therefore \, \intertext { i s a t r a j e c t o r y o f l e n g h $ H . $ S i n c e $ P ^ { \pi } ( \tau | x ) $ ( s i n c e $ P ^ { \pi } ( \tau | x ) $ ) }$$
 
 where τ is a trajectory of length H . Since P π ( τ | x ) (sim. P π b ( τ | x ) ) depends on the transition kernel T and the reward distribution q , one needs to estimate these distributions from the data. We may proceed as follows:
 
 - 1) We use the training data D tr to compute an estimate ( ˆ T, ˆ q ) of ( T, q ) (through maximum likelihood).
 - 2) Compute an estimate of ˆ w ( x, y ) through Monte-Carlo sampling:
 
-<!-- formula-not-decoded -->
+$$\hat { w } ( x , y ) & = \frac { ( 1 / h ) \sum _ { k = 1 } ^ { h } 1 } { ( 1 / h ) \sum _ { k = 1 } ^ { h } 1 } \{ y = \sum _ { t = 1 } ^ { H } r _ { t } ^ { ( k ) } \} \\ \intertext { w h e r e } \text {where } r _ { t } ^ { ( k ) } \text { and } r _ { t } ^ { ( k ) ^ { \prime } } \text { are sequences of rewards generated,}$$
 
 where r ( k ) t and r ( k ) ′ t are sequences of rewards generated, respectively, by starting in x and following π and π b , and h is the number of Monte Carlo samples. These trajectories are generated using ˆ T and ˆ q , estimated in the previous step.
 
@@ -175,36 +186,36 @@ This approach has various shortcomings. First it requires us to estimate the mod
 
 Next we present an alternative and more scalable way to estimate the weights w ( x, y ) from the training dataset D tr . We make use of the following simple rewriting of the likelihood ratio (also suggested in [24]):
 
-<!-- formula-not-decoded -->
+$$\text {likelihood ratio} \, ( \text {also suggested in } [ 2 4 ] ) & \colon \\ w ( x , y ) & = \frac { P _ { X , Y } ^ { \pi } ( x , y ) } { P _ { X , Y } ^ { \pi ^ { b } } ( x , y ) } , \\ & = \int \frac { P _ { X , Y } ^ { \pi } ( x , y ) } { P _ { X , Y } ^ { \pi ^ { b } } ( x , y ) } \frac { P _ { \tau | X , Y } ^ { \pi } ( \tau | x , y ) } { P _ { \tau | X , Y } ^ { \pi ^ { b } } ( \tau | x , y ) } P _ { \tau | X , Y } ^ { \pi } ( \tau | x , y ) d \tau , \\ & = \int \frac { P _ { X , Y , \tau } ( x , y , \tau ) } { P _ { X , Y , \tau } ^ { \pi ^ { b } } ( x , y , \tau ) } P _ { \tau | X , Y } ^ { \pi ^ { b } } ( \tau | x , y ) d \tau , \\ & = \mathbb { E } _ { \tau \sim P _ { \tau } ^ { \pi ^ { b } } ( X , Y , \tau = y } \left [ \frac { P _ { X , Y , \tau } ^ { \pi } ( x , y , \tau ) } { P _ { X , Y , \tau } ^ { \pi ^ { b } } ( x , y , \tau ) } \right ] . \\ \text {Next, observe that} & \colon$$
 
 Next, observe that:
 
-<!-- formula-not-decoded -->
+$$\frac { P _ { X , Y , \tau } ( x , y , \tau ) } { P _ { X , Y , \tau } ^ { \pi } ( x , y , \tau ) } & = \frac { P ( y | x , \tau ) P ^ { \pi } ( \tau | x ) } { P ( y | x , \tau ) P ^ { \pi ^ { b } } ( \tau | x ) } = \frac { \prod _ { t = 1 } ^ { H } \pi ( a _ { t } | x _ { t } ) } { \prod _ { t = 1 } ^ { H } \pi ^ { b } ( a _ { t } | x _ { t } ) } . \quad \text {that} \ w \\ \text {Hence, learning } w \text { amounts to learning the following expect-} \\ \text {tation} \colon$$
 
 Hence, learning w amounts to learning the following expectation:
 
-<!-- formula-not-decoded -->
+$$w ( x , y ) & = \mathbb { E } _ { \tau \sim P _ { \tau } ^ { \pi } } b \left [ \frac { \prod _ { t = 1 } ^ { H } \pi ( a _ { t } | x _ { t } ) } { \prod _ { t = 1 } ^ { H } \pi ^ { b } ( a _ { t } | x _ { t } ) } \right ] . \quad ( 1 1 ) \\ \intertext { T o s h i m , w e p o r o s e the f o l l o w i n g t w o r a p r o a c h e s . } & \quad by \theta , w$$
 
 1) Empirical estimator: this method applies to the case x and y belong to some finite spaces X and Y only. In this case, we can directly estimate w ( x, y ) from the training data D tr by simply computing
 
-<!-- formula-not-decoded -->
+$$\hat { w } ( x , y ) & = \frac { 1 } { N ( x , y ) } \sum _ { \tau ^ { i } \in \mathcal { D } _ { t r } ( x , y ) } \frac { \prod _ { t = 1 } ^ { H } \pi ( a _ { t } ^ { ( i ) } | x _ { t } ^ { ( i ) } ) } { \prod _ { t = 1 } ^ { H } \pi ^ { b } ( a _ { t } ^ { ( i ) } | x _ { t } ^ { ( i ) } ) } , \quad ( 1 2 ) \quad \text {to learn} \\ \text {where } \text { the training data } \mathcal { D } _ { t r } \text { consists of } m \text { trajectories} \quad \text {of action}$$
 
 where the training data D tr consists of m trajectories generated under π b , the i -th trajectory in this dataset is τ i = ( x ( i ) t , a ( i ) t , r ( i ) t ) H t =1 , D tr ( x, y ) are trajectories with initial state and the accumulated reward x and y , respectively, and N ( x, y ) = |D tr ( x, y ) | . When the likelihood ratios are bounded, we can quantify the accuracy of the above estimates using standard concentration results:
 
 Proposition 5: Let ( ε, δ ) ∈ (0 , 1) . Assume the ratio ∏ H t =1 π ( a t | x t ) / ∏ H t =1 π b ( a t | x t ) to be bounded in [ m,M ] for all possible trajectories of horizon H generated under π b . If min x,y N ( x, y ) ≥ ( M -m ) 2 2 ε 2 ln 2 |X||Y| δ , then
 
-<!-- formula-not-decoded -->
+$$\mathbb { P } ^ { \pi ^ { b } } [ | \hat { w } ( X , Y ) - w ( X , Y ) | > \varepsilon ] < \delta .$$
 
 Furthermore, we also have ∆ w ≤ ( M -m ) |X||Y| √ π 2 √ 2 min x,y N ( x,y ) .
 
 The quantities M and m are usually function of the horizon H (in general one can choose m = 0 ). For example, in case A is finite, we obtain:
 
-- In case π b and π are convex mixtures of a uniform distribution with another deterministic policy ˆ π , for example π ( a | x ) = /epsilon1 |A| + (1 -/epsilon1 ) 1 { a =ˆ π ( x ) } (sim. π b
+- In case π b and π are convex mixtures of a uniform distribution with another deterministic policy ˆ π , for example π ( a | x ) = ϵ |A| + (1 -ϵ ) 1 { a =ˆ π ( x ) } (sim. π b
 - If π b is uniform over A , then an upper bound M is given by |A| H , and m = ( |A| min x,a π ( a | x )) H .
 
-with /epsilon1 b ), for some /epsilon1, /epsilon1 b ≥ 0 , then one can choose M,m as
+with ϵ b ), for some ϵ, ϵ b ≥ 0 , then one can choose M,m as
 
-<!-- formula-not-decoded -->
+$$M ^ { 1 / H } = \max \left ( \frac { \epsilon } { \epsilon ^ { b } } , \frac { ( 1 - \epsilon ) + \epsilon / | \mathcal { A } | } { ( 1 - \epsilon ^ { b } ) + \epsilon ^ { b } / | \mathcal { A } | } \right ) , \\ m ^ { 1 / H } = \min \left ( \frac { \epsilon } { \epsilon ^ { b } } , \frac { ( 1 - \epsilon ) + \epsilon / | \mathcal { A } | } { ( 1 - \epsilon ^ { b } ) + \epsilon ^ { b } / | \mathcal { A } | } \right ) . \\ \text {See also Fig. 3 for an example of the scaling of } M - m .$$
 
 In general, we see that the dependency on H is mild when π and π b that are somehow similar. As a future research direction, we could investigate possible ways to alleviate the impact of H (for example, by looking at the stationary rewards of the MDP, as in [15]).
 
@@ -212,11 +223,11 @@ See also Fig. 3 for an example of the scaling of M -m .
 
 - 2) Gradient method: an alternative approach is to notice that w , as suggested in [24], can be seen as the solution of a MSE minimization problem. Indeed, w solves the following problem:
 
-<!-- formula-not-decoded -->
+$$\exp \text {c-} \int _ { f } \min _ { \substack { \min \mathbb { E } \\ ( 1 1 ) } } \frac { \min _ { \substack { E \\ ( X , Y , \tau ) \sim P _ { X , Y , \tau } ^ { b } } } \left [ \left ( \frac { \prod _ { t = 1 } ^ { H } \pi ( a _ { t } | x _ { t } ) } { \prod _ { t = 1 } ^ { H } \pi ^ { b } ( a _ { t } | x _ { t } ) } - f ( X , Y ) \right ) ^ { 2 } \right ] . \\ \text {There, given some function approximator } f _ { \theta } \text { parametrized}$$
 
 Therefore, given some function approximator f θ parametrized by θ , we can minimize over θ the following empirical risk:
 
-<!-- formula-not-decoded -->
+$$\begin{array} { r l } & { \quad b y \, 0 , \, w e c a n \, m m i n e \, 0 v e r \, 0 \, a n d \, n o w i n g \, e p l o w e r \, n o w i n g . } \\ { c a s } & { \quad \frac { 1 } { m } \sum _ { \tau ^ { i } \in \mathcal { D } _ { t r } } \left ( \frac { \prod _ { t = 1 } ^ { H } \pi ( a _ { t } ^ { ( i ) } | x _ { t } ^ { ( i ) } ) } { \prod _ { t = 1 } ^ { H } \pi ^ { b } ( a _ { t } ^ { ( i ) } | x _ { t } ^ { ( i ) } ) } - f _ { \theta } \left ( x _ { 1 } ^ { ( i ) } , \sum _ { t = 1 } ^ { H } r _ { t } ^ { ( i ) } \right ) \right ) ^ { 2 } . } \\ & { \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \qu$$
 
 As one would expect, this method still suffers from a large variance. For large horizons, it becomes quite difficult to learn the ratio of probabilities, especially when the two policies are extremely different. In fact for large H , in case the two policies are different, then it is likely that the ratio of action probabilities is 0 most of the time, with very few values different from 0 that tend to be extremely large. This makes the training procedure difficult, since most function approximators will just learn to output 0 .
 
@@ -226,9 +237,9 @@ To conclude this section, we present a generic sketch of our proposed algorithm,
 
 <!-- image -->
 
-/epsilon1
+ϵ
 
-Fig. 3. An example of the difference M -m for the case of a convex mixture, with |A| = 10 , H = 40 and /epsilon1 b = 0 . 4 .
+Fig. 3. An example of the difference M -m for the case of a convex mixture, with |A| = 10 , H = 40 and ϵ b = 0 . 4 .
 
 ## Algorithm 1 Conformal Off-Policy Evaluation in MDPs
 
@@ -245,11 +256,11 @@ scores distribution ˆ F x,y n , the algorithm can finally build the conformal p
 
 ## VI. NUMERICAL RESULTS
 
-We evaluate our algorithms on the inventory problem [20], which can be modelled as an MDP with finite state and action spaces. We assume the behavior and target policies ( π, π b ) to be known, and to be ( /epsilon1, /epsilon1 b ) -greedy with respect to the optimal policy π /star . For example, for π , this means that for all ( x, a ) ,
+We evaluate our algorithms on the inventory problem [20], which can be modelled as an MDP with finite state and action spaces. We assume the behavior and target policies ( π, π b ) to be known, and to be ( ϵ, ϵ b ) -greedy with respect to the optimal policy π ⋆ . For example, for π , this means that for all ( x, a ) ,
 
-<!-- formula-not-decoded -->
+$$\pi ( a | x ) = \frac { \epsilon } { | \mathcal { A } | } + ( 1 - \epsilon ) 1 _ { \{ a = \pi ^ { * } ( x ) \} } , \\ \text {immediately for } \pi ^ { b } \text { with } \epsilon ^ { b } \text { } \text { The optimal policy } \pi$$
 
-and similarly for π b with /epsilon1 b . The optimal policy π /star was computed by solving the infinite time-horizon discounted MDP, with discount factor γ = 0 . 99 . For each method, we evaluate the prediction interval for the cumulative return of the target policy π with different values of /epsilon1 , while the behavior policy π b has /epsilon1 b = 0 . 4 . By considering different values of /epsilon1 for the target policy, we are able to observe how the coverage and interval length vary with respect to the distance between the target and the behavior policies.
+and similarly for π b with ϵ b . The optimal policy π ⋆ was computed by solving the infinite time-horizon discounted MDP, with discount factor γ = 0 . 99 . For each method, we evaluate the prediction interval for the cumulative return of the target policy π with different values of ϵ , while the behavior policy π b has ϵ b = 0 . 4 . By considering different values of ϵ for the target policy, we are able to observe how the coverage and interval length vary with respect to the distance between the target and the behavior policies.
 
 ## A. Environment
 
@@ -262,9 +273,9 @@ We consider three different implementations of our algorithm: the first using th
 - 1) Pinball score function: this method adapts the algorithm presented in [24] to our setting (which is described in Section IV-B). We use the training dataset D tr to also learn two quantile networks ˆ q α lo and ˆ q α hi , with α lo = α/ 2 , α hi = 1 -α/ 2 (where α is the coverage parameter). The two functions are estimated using quantile regression and are modelled using two neural networks with two hidden layers of 64 nodes and ReLU activation functions. For this approach, the score function used is s ( x, y ) = max( y -ˆ q α hi , ˆ q α lo -y ) . Once we have computed the empirical CDF of the scores ˆ F x,y n , the confidence set is obtained using (3).
 - 2) Double Quantile (DQ) method: Here we apply the method in IV-B.1. In this method, we introduce two score functions
 
-<!-- formula-not-decoded -->
+$$s _ { 0 } ( x , y ) & = \hat { q } _ { \alpha _ { h } } ( x ) - y \\ s _ { 1 } ( x , y ) & = y - \hat { q } _ { \alpha _ { h } } ( x ) ,$$
 
-<!-- formula-not-decoded -->
+$$s _ { 1 } ( x , y ) = y - \hat { q } _ { \alpha _ { h i } } ( x ) , \\ \hat { a } _ { 1 } ( x , y ) = y - \hat { q } _ { \alpha _ { h i } } ( x ) ,$$
 
 where ˆ q α lo and ˆ q α hi are the same networks as in the previous method. Lastly, the confidence set is computed using (7).
 
@@ -274,7 +285,7 @@ where ˆ q α lo and ˆ q α hi are the same networks as in the previous method.
 
 We compare the conformal prediction method developed in this work to quantile estimation through importance sampling [4] with bootstrap. Importance sampling (IS) has been widely used as a variance reduction technique in statistical methods, but in our case it can be used to perform off-policy evaluation as in [19], [26]. However, compared to [19], [26] that try to estimate the mean value of the target policy π , we use the IS technique to estimate the ( α lo , α hi ) -quantiles of the value of π . The key insight is that q π α ( x ) , the α -quantile of π in x , can be estimated using the calibration data D cal and the likelihood ratio w ( x, y ) through the following expression
 
-<!-- formula-not-decoded -->
+$$\text {and} \, , \quad q _ { \alpha } ^ { \pi } ( x ) = \text {Quantile} _ { \alpha } \left ( \sum _ { y \in \mathcal { I } ( x ) } \frac { w \left ( x , y \right ) } { \sum _ { y ^ { \prime } \in \mathcal { I } ( x ) } w \left ( x , y ^ { \prime } \right ) } \delta _ { y } \right ) , \\ \text {yes} \, , \quad \text {where} \, \mathcal { I } ( x ) = \{ y \in \mathcal { D } _ { c a l } \colon x _ { 1 } = x \} , \, i . e . , \, \text {we only consider} \, \text { } \, ,$$
 
 where I ( x ) = { y ∈ D cal : x 1 = x } , i.e. , we only consider the cumulative rewards of the trajectories in D cal that start in x .
 
@@ -282,23 +293,23 @@ The inner term can be seen as an empirical estimator of F π x ( y ) = E Y ∼ P
 
 Next, rather than using the estimate q π α directly, to obtain a better estimate we use bootstrapping [27] to estimate a confidence interval around the α -quantile, obtaining a highconfidence interval ( q π α -, q π α + ) and then taking the median point ¯ q α ( x ) := ( q π α -+ q π α + ) / 2 . Finally, the confidence set for the value of π is simply given by
 
-Fig. 4. Results for the inventory control problem for H = 20 , 40 , with target coverage of 90% . The policy π b is /epsilon1 b -greedy w.r.t. π /star (an optimal discounted policy with discount factor γ = 0 . 99 ), with /epsilon1 b = 0 . 4 . We evaluated a target policy π that is /epsilon1 -greedy w.r.t. π /star , with varying /epsilon1 . On the left: we show the boxplots of the average conformalized intervals for the various methods (whiskers indicate 95% confidence intervals for the minimum and the maximum). On the right we depict the coverage (bars indicate 95% confidence intervals).
+Fig. 4. Results for the inventory control problem for H = 20 , 40 , with target coverage of 90% . The policy π b is ϵ b -greedy w.r.t. π ⋆ (an optimal discounted policy with discount factor γ = 0 . 99 ), with ϵ b = 0 . 4 . We evaluated a target policy π that is ϵ -greedy w.r.t. π ⋆ , with varying ϵ . On the left: we show the boxplots of the average conformalized intervals for the various methods (whiskers indicate 95% confidence intervals for the minimum and the maximum). On the right we depict the coverage (bars indicate 95% confidence intervals).
 
 <!-- image -->
 
-<!-- formula-not-decoded -->
+$$\hat { C } _ { n } ( x ) = [ \bar { q } _ { \alpha _ { l o } } ( x ) , \bar { q } _ { \alpha _ { h i } } ( x ) ] .$$
 
 It is important to remember that there is no coverage guarantees for this set ˆ C n ( x ) .
 
 ## D. Results and discussion
 
-In Figure 4, we show the results of our methods in the Inventory Problem for horizons 20 and 40, where results are averaged over 30 runs. Recall that the policy π b is /epsilon1 b -greedy w.r.t. π /star , with /epsilon1 b = 0 . 4 , while π is /epsilon1 -greedy w.r.t π /star , with /epsilon1 varying in [0 . 15 , 0 . 65] . The target level of coverage was chosen as 1 -α = 90% (depicted as the dashed black line in the plots of the second column). We evaluated our algorithms using the empirical estimate of ˆ w (see V-B.1) against the QIS-Bootstrap baseline method in Section VI-C.
+In Figure 4, we show the results of our methods in the Inventory Problem for horizons 20 and 40, where results are averaged over 30 runs. Recall that the policy π b is ϵ b -greedy w.r.t. π ⋆ , with ϵ b = 0 . 4 , while π is ϵ -greedy w.r.t π ⋆ , with ϵ varying in [0 . 15 , 0 . 65] . The target level of coverage was chosen as 1 -α = 90% (depicted as the dashed black line in the plots of the second column). We evaluated our algorithms using the empirical estimate of ˆ w (see V-B.1) against the QIS-Bootstrap baseline method in Section VI-C.
 
-1) Conformalized intervals: the plots in the left column illustrate the conformalized interval obtained for each method as a boxplot. For each run, method, and value of /epsilon1 , we evaluated the confidence interval across 2000 tests-points x test sampled from p ( x ) , and averaged the corresponding minimum and maximum values of the confidence set ˆ C n ( x test ) . The whiskers indicate 95% confidence interval for the minimum and the maximum. As mentioned in Section IV-B, we observe that the pinball method yields an interval that enlarges/shrinks symmetrically around a fixed point. As a consequence, the interval becomes larger to maintain the desired coverage when the target policy π becomes really different than π b (i.e., /epsilon1 is different than /epsilon1 b = 0 . 4 ). Instead, with the proposed double quantile method, the interval is shifted depending on how far the target policy π is w.r.t. π b , leading to smaller intervals even when the policies are far from each other. The intervals estimated by the QIS-Bootstrap method match the ones of our new score functions when π is close to π b . However, when the policies are far from each other, the estimated interval is too conservative (i.e., too small and off-centred), which reflects in the coverage level of the algorithm, quickly degrading as π moves away from π b , for both horizons.
+1) Conformalized intervals: the plots in the left column illustrate the conformalized interval obtained for each method as a boxplot. For each run, method, and value of ϵ , we evaluated the confidence interval across 2000 tests-points x test sampled from p ( x ) , and averaged the corresponding minimum and maximum values of the confidence set ˆ C n ( x test ) . The whiskers indicate 95% confidence interval for the minimum and the maximum. As mentioned in Section IV-B, we observe that the pinball method yields an interval that enlarges/shrinks symmetrically around a fixed point. As a consequence, the interval becomes larger to maintain the desired coverage when the target policy π becomes really different than π b (i.e., ϵ is different than ϵ b = 0 . 4 ). Instead, with the proposed double quantile method, the interval is shifted depending on how far the target policy π is w.r.t. π b , leading to smaller intervals even when the policies are far from each other. The intervals estimated by the QIS-Bootstrap method match the ones of our new score functions when π is close to π b . However, when the policies are far from each other, the estimated interval is too conservative (i.e., too small and off-centred), which reflects in the coverage level of the algorithm, quickly degrading as π moves away from π b , for both horizons.
 
 - 2) Coverage: the plots in the right column illustrate the achieved coverage, averaged over 30 runs (bars indicate 95% confidence interval). All the proposed conformalized methods achieved better levels of coverage than QIS-Bootstrap, as one would expect. For horizon H = 20 , the pinball method can maintain the desired level of coverage for all the epsilons at the expense of the interval length, while the new methods achieve a better level of coverage with a smaller interval size. For a larger horizon ( H = 40 ), we can see that the coverage of the QIS-Bootstrap method degrades very rapidly, maintaining the desired level only for π ≈ π b .
 
-3) Discussion and future work: Some of the methods discussed to estimate the likelihood ratio w ( x, y ) were not used in our numerical experiments. This is mostly due to computational challenges: as we previously mentioned, the computational complexity of the Monte-Carlo method vastly exceeds the complexity of the other methods (empirical estimator and gradient method), while the gradient method has several difficulties in learning the likelihood ratios for values of ( /epsilon1, /epsilon1 b ) that greatly differ. We plan to investigate how to efficiently learn the likelihood ratios using neural networks. Finally, we note that one may try conformalize the QIS-Bootstrap method in Section VI-C to have a more fair comparison.
+3) Discussion and future work: Some of the methods discussed to estimate the likelihood ratio w ( x, y ) were not used in our numerical experiments. This is mostly due to computational challenges: as we previously mentioned, the computational complexity of the Monte-Carlo method vastly exceeds the complexity of the other methods (empirical estimator and gradient method), while the gradient method has several difficulties in learning the likelihood ratios for values of ( ϵ, ϵ b ) that greatly differ. We plan to investigate how to efficiently learn the likelihood ratios using neural networks. Finally, we note that one may try conformalize the QIS-Bootstrap method in Section VI-C to have a more fair comparison.
 
 ## VII. CONCLUSION
 

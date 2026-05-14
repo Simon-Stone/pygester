@@ -8,6 +8,21 @@ version = "0.1.0"
 [tasks]
 check = "python -m py_compile src/*.py src/parsers/*.py"
 
+# QC: verify enrichment output
+qc = { cmd = "bash src/qc-enrichment.sh $1", description = "Verify enrichment output in a run directory" }
+
+# Test: run Texify on equation crops for ground truth comparison
+test-texify = { cmd = "python tests/texify_test.py", description = "Run Texify inference on equation crops" }
+
+# Sync: pull runs from server storage to local
+# Usage: pixi run local-pull-runs [SRC] [DEST]
+# Example: pixi run local-pull-runs user@server:/path/to/runs ./runs
+# Default: pulls from /mnt/Workspace/Pygester/runs/ to runs/
+local-pull-runs = { cmd = "sh -c 'rsync -avz --delete \"${SRC:-/mnt/Workspace/Pygester/runs/}\" \"${DEST:-runs/}\"'", description = "Pull runs from server storage to local" }
+
+# Alternative explicit mounted version
+local-pull-runs-mounted = { cmd = "rsync -avz --delete /mnt/Workspace/Pygester/runs/ runs/", description = "Pull runs from mounted server path (explicit)" }
+
 watch = { cmd = [
     "watchexec", "-r",
     "rsync", "-avz", "--delete",
@@ -30,5 +45,3 @@ pytest = ">=7.0.0"
 
 [pypi-dependencies]
 docling = ">=2.91.0"
-
-# gooberpants

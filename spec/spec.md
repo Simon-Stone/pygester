@@ -33,7 +33,7 @@ Defaults favor **fast triage**: no enrichment, no OCR. A run takes seconds, math
 For a "deep read" workflow, opt in:
 
 ```bash
-python scripts/process-pdf.py paper.pdf --out runs/foo \
+python src/process-pdf.py paper.pdf --out runs/foo \
   --formula-enrichment true \
   --code-enrichment true
 ```
@@ -56,7 +56,7 @@ process-pdf.py  # runs 01 → 02 → 03 in order
 ## CLI
 
 ```bash
-python scripts/process-pdf.py INPUT.pdf --out OUT_DIR [flags]
+python src/process-pdf.py INPUT.pdf --out OUT_DIR [flags]
 ```
 
 Flags:
@@ -68,7 +68,11 @@ Flags:
 | `--ocr {true,false}` | false | Docling OCR. Native-text PDFs don't need it. |
 | `--max-pages N` | none | Process only first N pages (testing). |
 | `--dpi N` | 200 | Page raster DPI. |
-| `--cache` | off | Skip re-parse if input SHA matches existing manifest. |
+
+**Output directory handling:**
+- `OUT_DIR` is created if it doesn't exist (`mkdir -p`)
+- All subdirectories (`pages/`, `visuals/`, `debug/`, etc.) are created on-demand before writes
+- Stage checkpoints: if an output file exists, the stage is skipped (enables resume from crash)
 
 Exit codes:
 
@@ -190,7 +194,7 @@ Artifacts that were previously under `debug/` (`figures.json`, `tables.json`,
 ## Reproducing this run
 
 ```bash
-python scripts/process-pdf.py "<source filename>" --out <OUT_DIR> <flags>
+python src/process-pdf.py "<source filename>" --out <OUT_DIR> <flags>
 ```
 ```
 
@@ -267,7 +271,7 @@ orjson>=3.10.0
 
 ## Caching
 
-`--cache` checks `debug/run-manifest.json` for matching input SHA *and* matching flag set. If both match, skip Stages 01–02 and rebuild Stage 03 only. Different flags = different cache key (a run with `--formula-enrichment on` does not satisfy a request for `--formula-enrichment off`).
+**Removed.** Stage checkpoints in `process-pdf.py` provide resume-from-crash functionality by checking if output files exist before running each stage. No SHA/flag-based caching.
 
 ## What this tool isn't
 

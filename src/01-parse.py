@@ -24,7 +24,6 @@ def parse_pdf(
     parser_name: str = "docling",
     dpi: int = 200,
     max_pages: int | None = None,
-    cache: bool = False,
     formula_enrichment: str = "off",
     code_enrichment: str = "off",
     ocr: str = "off",
@@ -41,21 +40,6 @@ def parse_pdf(
 
     input_sha = sha256_file(pdf_path)
     manifest_path = debug / "run-manifest.json"
-
-    # Cache check
-    if cache and manifest_path.exists():
-        manifest = read_json(manifest_path)
-        cached_flags = manifest.get("flags", {})
-        if (
-            manifest.get("input_pdf_sha256") == input_sha
-            and cached_flags.get("formula_enrichment") == formula_enrichment
-            and cached_flags.get("code_enrichment") == code_enrichment
-            and cached_flags.get("ocr") == ocr
-            and cached_flags.get("dpi") == dpi
-            and cached_flags.get("max_pages") == max_pages
-        ):
-            log.info("Cache hit: skipping Stage 01")
-            return
 
     # Copy original PDF
     original_pdf = debug / "original.pdf"
@@ -82,8 +66,13 @@ def parse_pdf(
     )
     log.info(f"Parse complete ({time.monotonic() - t0_parse:.1f}s)")
 
+    # Write parser outputs BEFORE rasterization (protect expensive enrichment work)
+    write_json(parser_dir / "raw_output.json", parsed.raw_output)
+    (parser_dir / "raw_output.md").write_text(parsed.markdown or "", encoding="utf-8")
+
     # Rasterize pages
     log.info(f"Rasterizing pages at {dpi} DPI")
+    pages_dir.mkdir(parents=True, exist_ok=True)
     t0_raster = time.monotonic()
     doc = fitz.open(pdf_path)
     page_count = len(doc) if max_pages is None else min(len(doc), max_pages)
@@ -91,10 +80,6 @@ def parse_pdf(
         pix = doc[i].get_pixmap(dpi=dpi)
         pix.save(str(pages_dir / f"page_{i+1:04d}.png"))
     log.info(f"Rasterization complete ({time.monotonic() - t0_raster:.1f}s) — wrote {page_count} PNGs")
-
-    # Write parser outputs
-    write_json(parser_dir / "raw_output.json", parsed.raw_output)
-    (parser_dir / "raw_output.md").write_text(parsed.markdown or "", encoding="utf-8")
 
     # Write manifest
     manifest = {
@@ -137,7 +122,6 @@ def main() -> None:
     p.add_argument("--ocr", choices=["true", "false"], default="false")
     p.add_argument("--max-pages", type=int, default=None)
     p.add_argument("--dpi", type=int, default=200)
-    p.add_argument("--cache", action="store_true")
     args = p.parse_args()
 
     parse_pdf(
@@ -148,7 +132,6 @@ def main() -> None:
         ocr=args.ocr,
         max_pages=args.max_pages,
         dpi=args.dpi,
-        cache=args.cache,
     )
 
 

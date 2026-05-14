@@ -192,11 +192,14 @@ def extract_figures(parser_json: Path, pages_dir: Path, dpi: int, debug_dir: Pat
     return figures, len(figures)
 
 
-def extract_tables(parser_json: Path) -> tuple[list[dict], int]:
+def extract_tables(parser_json: Path, debug_dir: Path) -> tuple[list[dict], int]:
     """Extract table info from parser JSON. Returns (tables, count)."""
     data = read_json(parser_json)
     tables_data = data.get("tables", [])
     tables = []
+
+    # Create output directory
+    tables_dir = ensure_dir(debug_dir / "tables")
 
     for i, tbl in enumerate(tables_data):
         prov = tbl.get("prov", [])
@@ -354,7 +357,7 @@ def extract_equations(parser_json: Path, pages_dir: Path, dpi: int, debug_dir: P
     return equations, len(equations)
 
 
-def extract_references(parser_json: Path) -> tuple[list[dict], int]:
+def extract_references(parser_json: Path, debug_dir: Path) -> tuple[list[dict], int]:
     """Extract reference info from parser JSON. Returns (references, count)."""
     data = read_json(parser_json)
     texts = data.get("texts", [])
@@ -367,6 +370,9 @@ def extract_references(parser_json: Path) -> tuple[list[dict], int]:
 
     if refs_start is None:
         return [], 0
+
+    # Create output directory
+    references_dir = ensure_dir(debug_dir / "references")
 
     references = []
     for i, t in enumerate(texts[refs_start:]):
@@ -448,12 +454,12 @@ def clean(out_dir: Path) -> None:
     (out_dir / "paper.md").write_text(with_frontmatter, encoding="utf-8")
 
     log.info("Walking Docling AST")
-    sections = extract_sections(parser_md)
+    sections = extract_sections(parser_md) if parser_md.exists() else []
     figures, fig_count = extract_figures(parser_dir / "raw_output.json", pages_dir, dpi, debug, out_dir, log)
-    tables, tbl_count = extract_tables(parser_dir / "raw_output.json")
+    tables, tbl_count = extract_tables(parser_dir / "raw_output.json", debug)
     equations, eq_count = extract_equations(parser_dir / "raw_output.json", pages_dir, dpi, debug, out_dir, log)
     code_blocks, code_count = extract_code_blocks(parser_dir / "raw_output.json", pages_dir, dpi, debug, out_dir, log)
-    references, ref_count = extract_references(parser_dir / "raw_output.json")
+    references, ref_count = extract_references(parser_dir / "raw_output.json", debug)
 
     counts = {
         "sections": len(sections),
