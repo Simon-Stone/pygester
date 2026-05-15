@@ -1,7 +1,10 @@
 {
   "schema_version": "1",
   "paper_profile": {
-    "title": "Unknown",
+    "title": "Conformal Off-Policy Evaluation in Markov Decision Processes",
+    "authors": [
+      "Daniele Foffano ∗ , Alessio Russo ∗ and Alexandre Proutiere"
+    ],
     "page_count": 8,
     "input_pdf_sha256": "b85a8bca89098e3f38a955f9c7a2fdf6dc40302ebb8e624441843b91e6522b0e",
     "parser": {
@@ -1011,7 +1014,9 @@
     "gates": {
       "paper_md_exists": true,
       "has_references_section": true,
-      "raster_page_count_ok": true
+      "raster_page_count_ok": true,
+      "technical_summary_exists": true,
+      "technical_summary_has_equations": true
     }
   },
   "evidence_index": {

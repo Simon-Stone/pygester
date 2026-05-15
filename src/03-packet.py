@@ -40,16 +40,12 @@ def build_context_packet(out_dir: Path) -> None:
     if (out_dir / "visuals" / "code" / "code.json").exists():
         code_blocks = read_json(out_dir / "visuals" / "code" / "code.json")
 
+    paper_profile = extract_paper_profile(debug, manifest)
+
     # Build packet
     packet = {
         "schema_version": "1",
-        "paper_profile": {
-            "title": "Unknown",
-            "page_count": manifest.get("page_count", 0),
-            "input_pdf_sha256": manifest.get("input_pdf_sha256", ""),
-            "parser": manifest.get("parser", {}),
-            "tool_version": SKILL_VERSION,
-        },
+        "paper_profile": paper_profile,
         "sections": sections,
         "figures": figures,
         "tables": tables,
@@ -68,6 +64,54 @@ def build_context_packet(out_dir: Path) -> None:
     }
 
     write_json(out_dir / "context-packet.json", packet)
+
+
+def extract_paper_profile(debug: Path, manifest: dict) -> dict:
+    """Extract conservative paper profile from Docling output."""
+    profile = {
+        "title": None,
+        "authors": [],
+        "page_count": manifest.get("page_count", 0),
+        "input_pdf_sha256": manifest.get("input_pdf_sha256", ""),
+        "parser": manifest.get("parser", {}),
+        "tool_version": SKILL_VERSION,
+    }
+
+    raw_path = debug / "parser" / "raw_output.json"
+    if not raw_path.exists():
+        return profile
+
+    texts = read_json(raw_path).get("texts", [])
+    title_idx = None
+    for i, block in enumerate(texts):
+        if block.get("label") == "section_header":
+            title = (block.get("text") or block.get("orig") or "").strip()
+            if title:
+                profile["title"] = title
+                title_idx = i
+                break
+
+    if title_idx is None:
+        return profile
+
+    authors = []
+    for block in texts[title_idx + 1:]:
+        label = block.get("label")
+        text = (block.get("text") or block.get("orig") or "").strip()
+        if not text:
+            continue
+        if label == "section_header":
+            break
+        if label not in ("text", "paragraph"):
+            continue
+        if text.lower().startswith("abstract"):
+            break
+        authors.append(text)
+
+    if authors:
+        profile["authors"] = authors
+
+    return profile
 
 
 def write_technical_summary(out_dir: Path, packet: dict, manifest: dict, enrichment_on: bool) -> Path:
@@ -103,7 +147,9 @@ def write_technical_summary(out_dir: Path, packet: dict, manifest: dict, enrichm
     else:
         parts.extend(render_equation_groups(equations, packet, enrichment_on))
 
-    summary_path.write_text("\n".join(parts), encoding="utf-8")
+    text = "\n".join(parts)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    summary_path.write_text(text, encoding="utf-8")
     return summary_path
 
 
@@ -195,10 +241,12 @@ def extract_equation_context(eq: dict) -> str | None:
     if not sentences:
         return None
     last = sentences[-1]
+    last = re.sub(r"^[\s,;:—–-]+", "", last)
+    last = re.sub(r"[\s,;:]+$", "", last)
     words = last.split()
     if len(words) > 25:
         last = " ".join(words[:25]) + "…"
-    return last
+    return last or None
 
 
 def write_manifest_md(out_dir: Path, eq_count: int) -> None:

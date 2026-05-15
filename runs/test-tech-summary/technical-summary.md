@@ -1,8 +1,8 @@
-# Technical summary — (title not detected)
+# Technical summary — Conformal Off-Policy Evaluation in Markov Decision Processes
 
-Authors: unknown
+Authors: Daniele Foffano ∗ , Alessio Russo ∗ and Alexandre Proutiere
 Source: assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf (SHA b85a8bca8909)
-Generated: 2026-05-15T13:19:29.824623+00:00
+Generated: 2026-05-15T13:33:18.808324+00:00
 Formula enrichment: false
 
 ## Equations
@@ -12,7 +12,7 @@ Formula enrichment: false
 ```
 1 -α ≤ P ( Y ∈ ˆ C n ( X )) ≤ 1 -α + 1 n +1 . (1)
 ```
-*Equation (1)* — , ( X n +1 , Y n +1 ) are exchangeable, this construction ensures coverage with certainty level 1 -α :
+*Equation (1)* — ( X n +1 , Y n +1 ) are exchangeable, this construction ensures coverage with certainty level 1 -α
 
 ### From "A. Weighted conformal prediction" (p. 2)
 
@@ -29,7 +29,7 @@ P π ′ ( τ | x ) = π ′ ( a 1 | x ) q ( r 1 | x, a 1 ) H ∏ t =2 π ′ ( 
 ```
 w ( x, y ) = ∫ 1 { y = ∑ H t =1 r t } P π ( τ | x )d τ ∫ 1 { y = ∑ H t =1 r t } P π b ( τ | x )d τ .
 ```
-*Equation (4)* — Hence the weights can be written as:
+*Equation (4)* — Hence the weights can be written as
 
 ```
 p w i ( x, y ) =        w ( X i , Y i ) ∑ n j =1 w ( X j , Y j ) + w ( x, y ) if i ≤ n, w ( x, y ) ∑ n j =1 w ( X j , Y j ) + w ( x, y ) if i = n +1 , (2)
@@ -44,7 +44,7 @@ p w i ( x, y ) =        w ( X i , Y i ) ∑ n j =1 w ( X j 
 ```
 P π b ,π [ Y ∈ ˆ C n ( X ) ] ≥ 1 -α, (4)
 ```
-*Equation (7)* — Proposition 1: Under Assumption 1, for any score function s and any α ∈ (0 , 1) ,
+*Equation (7)* — Proposition 1: Under Assumption 1, for any score function s and any α ∈ (0 , 1)
 
 ```
 P π b ,π [ Y ∈ ˆ C n ( X ) ] ≥ 1 -α -∆ w , (5)
@@ -98,24 +98,24 @@ w ( x, y ) = ∫ 1 { y = ∑ H t =1 r t } P π ( τ | x )d τ ∫ 1 { y = ∑ H 
 ```
 ˆ w ( x, y ) = (1 /h ) ∑ h k =1 1 { y = ∑ H t =1 r ( k ) t } (1 /h ) ∑ h k =1 1 { y = ∑ H t =1 r ( k ) ′ t } , (10)
 ```
-*Equation (17)* — We may proceed as follows:
+*Equation (17)* — We may proceed as follows
 
 ### From "B. Empirical and gradient-based methods" (p. 5)
 
 ```
 w ( x, y ) = P π X,Y ( x, y ) P π b X,Y ( x, y ) , = ∫ P π X,Y ( x, y ) P π b X,Y ( x, y ) P π b τ | X,Y ( τ | x, y ) P π b τ | X,Y ( τ | x, y ) P π τ | X,Y ( τ | x, y )d τ, = ∫ P π X,Y,τ ( x, y, τ ) P π b X,Y,τ ( x, y, τ ) P π b τ | X,Y ( τ | x, y )d τ, = E τ ∼ P π b τ | X = x,Y = y [ P π X,Y,τ ( x, y, τ ) P π b X,Y,τ ( x, y, τ ) ] .
 ```
-*Equation (18)* — We make use of the following simple rewriting of the likelihood ratio (also suggested in [24]):
+*Equation (18)* — We make use of the following simple rewriting of the likelihood ratio (also suggested in [24])
 
 ```
 P π X,Y,τ ( x, y, τ ) P π b X,Y,τ ( x, y, τ ) = P ( y | x, τ ) P π ( τ | x ) P ( y | x, τ ) P π b ( τ | x ) = ∏ H t =1 π ( a t | x t ) ∏ H t =1 π b ( a t | x t ) .
 ```
-*Equation (19)* — Next, observe that:
+*Equation (19)* — Next, observe that
 
 ```
 w ( x, y ) = E τ ∼ P π b τ | X = x,Y = y [ ∏ H t =1 π ( a t | x t ) ∏ H t =1 π b ( a t | x t ) ] . (11) To this aim, we propose the following two approaches.
 ```
-*Equation (20)* — Hence, learning w amounts to learning the following expectation:
+*Equation (20)* — Hence, learning w amounts to learning the following expectation
 
 ```
 ˆ w ( x, y ) = 1 N ( x, y ) ∑ τ i ∈D tr ( x,y ) ∏ H t =1 π ( a ( i ) t | x ( i ) t ) ∏ H t =1 π b ( a ( i ) t | x ( i ) t ) , (12)
@@ -140,14 +140,14 @@ min f E ( X,Y,τ ) ∼ P π b X,Y,τ   ( ∏ H t =1 π ( a t | x t ) ∏ H
 ```
 1 m ∑ τ i ∈D tr ( ∏ H t =1 π ( a ( i ) t | x ( i ) t ) ∏ H t =1 π b ( a ( i ) t | x ( i ) t ) -f θ ( x ( i ) 1 , H ∑ t =1 r ( i ) t )) 2 .
 ```
-*Equation (25)* — Therefore, given some function approximator f θ parametrized by θ , we can minimize over θ the following empirical risk:
+*Equation (25)* — Therefore, given some function approximator f θ parametrized by θ , we can minimize over θ the following empirical risk
 
 ### From "VI. NUMERICAL RESULTS" (p. 6)
 
 ```
 π ( a | x ) = ϵ |A| +(1 -ϵ ) 1 { a = π ⋆ ( x ) } ,
 ```
-*Equation (26)* — For example, for π , this means that for all ( x, a ) ,
+*Equation (26)* — For example, for π , this means that for all ( x, a )
 
 ### From "B. Algorithm details" (p. 6)
 
