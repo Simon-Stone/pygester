@@ -13,7 +13,6 @@ def main() -> None:
     p.add_argument("pdf", type=Path)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--formula-enrichment", choices=["true", "false"], default="false")
-    p.add_argument("--code-enrichment", choices=["true", "false"], default="false")
     p.add_argument("--ocr", choices=["true", "false"], default="false")
     p.add_argument("--max-pages", type=int, default=None)
     p.add_argument("--dpi", type=int, default=200)
@@ -37,8 +36,6 @@ def main() -> None:
             str(args.out),
             "--formula-enrichment",
             args.formula_enrichment,
-            "--code-enrichment",
-            args.code_enrichment,
             "--ocr",
             args.ocr,
             "--dpi",

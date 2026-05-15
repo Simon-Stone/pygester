@@ -24,14 +24,13 @@ def parse_pdf(
     dpi: int = 200,
     max_pages: int | None = None,
     formula_enrichment: str = "false",
-    code_enrichment: str = "false",
     ocr: str = "false",
 ) -> None:
     log = setup_logging(out_dir)
     t0_total = time.monotonic()
 
     log.info("Stage 01 starting")
-    log.info(f"Config: formula_enrichment={formula_enrichment}, code_enrichment={code_enrichment}, ocr={ocr}, dpi={dpi}, max_pages={max_pages}")
+    log.info(f"Config: formula_enrichment={formula_enrichment}, ocr={ocr}, dpi={dpi}, max_pages={max_pages}")
 
     debug = ensure_dir(out_dir / "debug")
     parser_dir = ensure_dir(debug / "parser")
@@ -51,7 +50,6 @@ def parse_pdf(
     log.info(f"Loading complete ({time.monotonic() - t0_parse:.1f}s)")
 
     do_formula = _flag_on(formula_enrichment)
-    do_code = _flag_on(code_enrichment)
     do_ocr = _flag_on(ocr)
 
     log.info(f"Parsing {pdf_path.name}")
@@ -60,7 +58,6 @@ def parse_pdf(
         pdf_path,
         max_pages=max_pages,
         do_formula_enrichment=do_formula,
-        do_code_enrichment=do_code,
         do_ocr=do_ocr,
     )
     log.info(f"Parse complete ({time.monotonic() - t0_parse:.1f}s)")
@@ -89,7 +86,6 @@ def parse_pdf(
         "input_pdf_sha256": input_sha,
         "flags": {
             "formula_enrichment": formula_enrichment,
-            "code_enrichment": code_enrichment,
             "ocr": ocr,
             "dpi": dpi,
             "max_pages": max_pages,
@@ -99,7 +95,6 @@ def parse_pdf(
             "version": parser.version,
             "config": {
                 "do_formula_enrichment": do_formula,
-                "do_code_enrichment": do_code,
                 "do_ocr": do_ocr,
             },
         },
@@ -117,7 +112,6 @@ def main() -> None:
     p.add_argument("pdf", type=Path)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--formula-enrichment", choices=["true", "false"], default="false")
-    p.add_argument("--code-enrichment", choices=["true", "false"], default="false")
     p.add_argument("--ocr", choices=["true", "false"], default="false")
     p.add_argument("--max-pages", type=int, default=None)
     p.add_argument("--dpi", type=int, default=200)
@@ -127,7 +121,6 @@ def main() -> None:
         args.pdf,
         args.out,
         formula_enrichment=args.formula_enrichment,
-        code_enrichment=args.code_enrichment,
         ocr=args.ocr,
         max_pages=args.max_pages,
         dpi=args.dpi,

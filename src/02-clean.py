@@ -44,7 +44,6 @@ parser: {manifest.get("parser", {}).get("name", "docling")} {manifest.get("parse
 tool_version: {SKILL_VERSION}
 run_at: {manifest.get("timestamp_utc", "")}
 formula_enrichment: {flags.get("formula_enrichment", "false")}
-code_enrichment: {flags.get("code_enrichment", "false")}
 ocr: {flags.get("ocr", "false")}
 ---
 
@@ -403,7 +402,6 @@ def write_quality_report(out_dir: Path, manifest: dict, counts: dict) -> None:
         "table_count": counts.get("tables", 0),
         "equation_count": counts.get("equations", 0),
         "reference_count": counts.get("references", 0),
-        "code_block_count": counts.get("code_blocks", 0),
     }
 
     write_json(out_dir / "quality-report.json", report)
@@ -446,7 +444,6 @@ def clean(out_dir: Path) -> None:
         "tables": tbl_count,
         "equations": eq_count,
         "references": ref_count,
-        "code_blocks": code_count,
     }
 
     log.info(f"Wrote {eq_count} equations, {fig_count} figures, {tbl_count} tables, {ref_count} references")
@@ -471,10 +468,6 @@ def clean(out_dir: Path) -> None:
     if references:
         references_dir = ensure_dir(out_dir / "references")
         write_json(references_dir / "references.json", references)
-
-    if code_blocks:
-        code_dir = ensure_dir(out_dir / "visuals" / "code")
-        write_json(code_dir / "code.json", code_blocks)
 
     manifest["stages_completed"] = ["01-parse", "02-clean"]
     write_json(debug / "run-manifest.json", manifest)
