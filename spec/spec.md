@@ -34,11 +34,10 @@ For a "deep read" workflow, opt in:
 
 ```bash
 python src/process-pdf.py paper.pdf --out runs/foo \
-  --formula-enrichment true \
-  --code-enrichment true
+  --formula-enrichment true
 ```
 
-A deep-read run takes minutes (multiple model loads + per-block inference) but produces LaTeX math and clean code blocks in `paper.md`.
+A deep-read run takes minutes (multiple model loads + per-block inference) but produces LaTeX math in `paper.md`.
 
 All toggles are recorded in the run manifest so any output is reproducible from its config.
 
@@ -64,7 +63,6 @@ Flags:
 | Flag | Default | Effect |
 |---|---|---|
 | `--formula-enrichment {true,false}` | false | Docling formula → LaTeX. Costs minutes per paper. |
-| `--code-enrichment {true,false}` | false | Docling code blocks → clean text + language tags. Costs minutes per paper. |
 | `--ocr {true,false}` | false | Docling OCR. Native-text PDFs don't need it. |
 | `--max-pages N` | none | Process only first N pages (testing). |
 | `--dpi N` | 200 | Page raster DPI. |
@@ -77,8 +75,7 @@ Flags:
 Exit codes:
 
 - `0` — success
-- `1` — input PDF missing or unreadable
-- `2` — uncaught exception (stderr has the traceback)
+- Non-zero — any error (wrapper uses `subprocess.run(check=True)`)
 
 ## Outputs
 
@@ -92,16 +89,13 @@ OUT_DIR/
 ├── quality-report.json       # which gates passed, what's missing
 ├── pages/                    # one image per page
 │   └── page_0001.png …
-├── visuals/                  # per-block crops (equations, figures, code)
+├── visuals/                  # per-block crops (equations, figures)
 │   ├── equations/
 │   │   ├── equations.json
 │   │   └── equation_NNN.png …
-│   ├── figures/
-│   │   ├── figures.json
-│   │   └── figure_NNN.png …
-│   └── code/                 # only when code blocks found
-│       ├── code.json
-│       └── code_NNN.png …
+│   └── figures/
+│       ├── figures.json
+│       └── figure_NNN.png …
 ├── tables/                   # extracted tables (when present)
 │   └── tables.json
 ├── references/               # extracted references (when present)
@@ -116,8 +110,7 @@ OUT_DIR/
     └── intermediate/
         ├── text/
         │   ├── plaintext.txt # cleaned canonical text
-        │   ├── sections.json # section tree (already in context-packet)
-        │   └── provenance.json # char-offset → page/bbox map
+        │   └── sections.json # section tree (already in context-packet)
         └── markdown/         # intermediate snapshots from Stage 02 post-processing
             └── 01-with-frontmatter.md …
 ```
@@ -237,9 +230,9 @@ Stage 02 also produces the structured sidecars: `sections.json`, `provenance.jso
 
 ### Stage 03 — Packet
 
-Compose `context-packet.json` from the debug artifacts. The packet is the structured handoff: title, sections with char-offset ranges, figures with captions and image paths, tables with CSV paths, equations with LaTeX and image paths, references, paper provenance, and an evidence index pointing at page PNGs.
+Compose `context-packet.json` from the debug artifacts. The packet is the structured handoff: title, sections with char-offset ranges, figures with captions and image paths, tables, equations with LaTeX and image paths, references, paper provenance, and an evidence index pointing at page PNGs.
 
-Also writes `quality-report.json` (which artifacts are populated, which are empty, any warnings from Stages 01–02) and `MANIFEST.md` (auto-generated human-readable explainer; see Outputs section).
+Also writes `MANIFEST.md` (auto-generated human-readable explainer; see Outputs section).
 
 ## Hard constraints
 
@@ -252,11 +245,9 @@ Also writes `quality-report.json` (which artifacts are populated, which are empt
 
 Written to `quality-report.json`. Each is a bool plus a short note. None block the pipeline by default; they're advisory.
 
-- `canonical_non_empty` — `debug/text/plaintext.txt` has content
-- `has_references_section` — at least one section heading matches `^REFERENCES$|^BIBLIOGRAPHY$` (case-insensitive)
-- `raster_page_count_ok` — number of page PNGs matches Docling's page count
-- `paper_md_exists` — `paper.md` is non-empty
-- `context_packet_valid` — `context-packet.json` parses as valid JSON with required keys
+- `paper_md_exists` — `paper.md` exists and non-empty
+- `has_references_section` — at least one reference extracted
+- `raster_page_count_ok` — number of page PNGs matches manifest page count
 
 No `has_abstract` gate (Docling doesn't tag abstracts; we don't try to synthesize one). No `section_hierarchy_consistent` gate (we trust Docling's hierarchy). No `false_positive_demoted` anomalies (we don't demote anything).
 
