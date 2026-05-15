@@ -21,18 +21,17 @@ def _flag_on(value: str) -> bool:
 def parse_pdf(
     pdf_path: Path,
     out_dir: Path,
-    parser_name: str = "docling",
     dpi: int = 200,
     max_pages: int | None = None,
-    formula_enrichment: str = "off",
-    code_enrichment: str = "off",
-    ocr: str = "off",
+    formula_enrichment: str = "false",
+    code_enrichment: str = "false",
+    ocr: str = "false",
 ) -> None:
     log = setup_logging(out_dir)
     t0_total = time.monotonic()
 
     log.info("Stage 01 starting")
-    log.info(f"Config: formula_enrichment={formula_enrichment}, code_enrichment={code_enrichment}, ocr={ocr}, dpi={dpi}")
+    log.info(f"Config: formula_enrichment={formula_enrichment}, code_enrichment={code_enrichment}, ocr={ocr}, dpi={dpi}, max_pages={max_pages}")
 
     debug = ensure_dir(out_dir / "debug")
     parser_dir = ensure_dir(debug / "parser")

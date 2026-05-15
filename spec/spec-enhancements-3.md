@@ -6,10 +6,10 @@ Goal: when LaTeX from formula enrichment is malformed or you want to verify an L
 
 ## Where this lives
 
-Stage 02. After walking Docling's AST to populate `debug/equations/equations.json` etc. (the bug from the previous cleanup pass), the same loop also writes the crop alongside.
+Stage 02. After walking Docling's AST to populate top-level artifact sidecars, the same loop also writes crops alongside those sidecars. `debug/` keeps parser/intermediate plumbing; reusable artifacts live at top level.
 
 ```
-debug/
+visuals/
 ├── equations/
 │   ├── equations.json
 │   ├── equation_001.png
@@ -19,7 +19,7 @@ debug/
 │   ├── figures.json
 │   ├── figure_001.png
 │   └── ...
-└── code/                  # only if --code-enrichment on
+└── code/                  # only if --code-enrichment true and code blocks found
     ├── code.json
     ├── code_001.png
     └── ...
@@ -75,7 +75,7 @@ def crop_block(page_png: Path, bbox: dict, dpi: int, padding_px: int = 6) -> Ima
 In whatever Stage 02 function walks the AST and writes `equations.json`:
 
 ```python
-equations_dir = out_dir / "debug" / "equations"
+equations_dir = out_dir / "visuals" / "equations"
 equations_dir.mkdir(parents=True, exist_ok=True)
 
 equations = []
@@ -95,7 +95,7 @@ for i, block in enumerate(formula_blocks, start=1):
         "page": page_num,
         "bbox": bbox,
         "latex": block.get("text", ""),
-        "image_path": f"debug/equations/{crop_filename}",
+        "image_path": f"visuals/equations/{crop_filename}",
         "number": _extract_equation_number(block),  # e.g., "(11)" or None
     })
 
@@ -114,7 +114,7 @@ Same pattern for figures (block label `picture`) and code (block label `code`).
 
 Docling's bbox `coord_origin` field is the load-bearing detail. PDFs traditionally measure from bottom-left; images measure from top-left. If you skip the flip, your crops will land in the wrong place vertically.
 
-Verification: after the first run, open `debug/equations/equation_001.png` and confirm it actually shows equation (1). If you got a chunk of header or page-number area, the flip is wrong — invert the condition in `crop_block`.
+Verification: after first run, open `visuals/equations/equation_001.png` and confirm it actually shows equation (1). If you got header or page-number area, flip is wrong — invert condition in `crop_block`.
 
 Docling may also occasionally report bboxes in `TOPLEFT` origin (e.g., for some block types or in newer versions). The function above handles both cases by branching on `coord_origin`.
 

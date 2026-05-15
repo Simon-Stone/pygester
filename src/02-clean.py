@@ -4,7 +4,6 @@ import argparse
 import logging
 import re
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 
 from common import read_json, write_json, setup_logging, ensure_dir
@@ -170,7 +169,6 @@ def extract_figures(parser_json: Path, pages_dir: Path, dpi: int, debug_dir: Pat
                 
                 cropped = page_img.crop(pixels)
                 cropped.save(figures_dir / crop_filename)
-                image_path = f"debug/figures/{crop_filename}"
                 crops_written += 1
             except Exception as e:
                 log.warning(f"Crop failed for figure {i}: {e}")
@@ -407,12 +405,13 @@ def write_quality_report(out_dir: Path, manifest: dict, counts: dict) -> None:
     pages_dir = out_dir / "pages"
     page_count = len(list(pages_dir.glob("page_*.png"))) if pages_dir.exists() else 0
 
+    paper_md = out_dir / "paper.md"
+    paper_exists = paper_md.exists() and paper_md.stat().st_size > 0
+
     gates = {
-        "canonical_non_empty": True,
+        "paper_md_exists": paper_exists,
         "has_references_section": counts.get("references", 0) > 0,
         "raster_page_count_ok": page_count == manifest.get("page_count", 0),
-        "paper_md_exists": True,
-        "context_packet_valid": True,
     }
 
     report = {
