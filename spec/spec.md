@@ -172,13 +172,12 @@ Artifacts that were previously under `debug/` (`figures.json`, `tables.json`,
 
 - Docling version: `<X.Y.Z>`
 - Formula enrichment: `<true|false>` — <"math came through as LaTeX" | "math came through as flattened Unicode">
-- Code enrichment: `<true|false>` — <"code blocks cleaned" | "code blocks as raw text">
 - OCR: `<true|false>` — <"OCR ran" | "OCR skipped; PDF had a usable text layer">
-- Pages processed: `<N>` of `<M>`<br>
+- Pages processed: `<N>`
 - Sections detected: `<N>`
 - Figures detected: `<N>`
 - Tables detected: `<N>`
-- Equations detected: `<N>` <(only counts the ones formula enrichment processed if it was on)>
+- Equations detected: `<N>`
 
 ## Quality gates
 
@@ -226,7 +225,7 @@ If only step 1 fires, `01-with-frontmatter.md` and `paper.md` are identical (mod
 
 We do **not** demote, promote, classify, or "fix" Docling's section headings. If Docling calls `Algorithm 1` a section, it stays a section. If Docling tags the paper title as `section_header`, it stays an H1 in the markdown. The tool is faithful to Docling's choices.
 
-Stage 02 also produces the structured sidecars: `sections.json`, `provenance.json`, `figures.json`, `tables.json`, `equations.json`, `references.json`. Each is best-effort based on what Docling provides; empty lists are valid outputs when Docling found nothing.
+Stage 02 also produces the structured sidecars: `sections.json`, `figures.json`, `tables.json`, `equations.json`, `references.json`. Each is best-effort based on what Docling provides; empty lists are valid outputs when Docling found nothing.
 
 ### Stage 03 — Packet
 

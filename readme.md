@@ -10,10 +10,10 @@ This tool does **not** call an LLM. It produces a clean artifact bundle you hand
 
 PDF in. Out comes:
 
-- `paper.md` — cleaned markdown of the paper. Section structure preserved. Math kept as LaTeX. Page banners and IEEE running headers stripped. Ligatures and hyphenation normalized.
-- `context_packet.json` — structured metadata: sections with page ranges, figures with captions, tables, algorithms, equations, references, provenance. The thing you paste alongside the markdown when an LLM needs to know "what's on page 4."
+- `paper.md` — cleaned markdown of the paper. Section structure preserved. Math kept as LaTeX. Ligatures and hyphenation normalized.
+- `context-packet.json` — structured metadata: sections with page ranges, figures with captions, tables, equations, references. The thing you paste alongside the markdown when an LLM needs to know "what's on page 4."
 - `pages/page_NNNN.png` — one rasterized page per page. Use them as evidence when discussing math, figures, or anything where the 2D layout matters.
-- `quality_report.json` — what passed, what failed, what's suspicious. Read this before trusting the rest.
+- `quality-report.json` — what passed, what failed, what's suspicious. Read this before trusting the rest.
 
 That's the whole tool.
 
@@ -27,14 +27,12 @@ pixi install            # or: pip install -r src/requirements.txt
 python src/process-pdf.py path/to/paper.pdf --out run/
 ```
 
-Outputs land in `run/outputs/`. Intermediate artifacts in `run/artifacts/`. Both gitignored.
+Outputs land directly in `--out` directory. Intermediate artifacts in `debug/`. Both gitignored.
 
 Useful flags:
 
 - `--max-pages N` — limit for testing on long papers
-- `--dpi 200` — page raster resolution (default 200)
-- `--cache` — skip re-extraction if the input PDF hasn't changed
-- `--fail-on-low-quality` — exit non-zero if quality gates fail (default: warn only)
+- `--dpi N` — page raster resolution (default 200)
 
 No API keys. No network calls beyond Docling's model downloads on first install.
 
@@ -43,7 +41,7 @@ No API keys. No network calls beyond Docling's model downloads on first install.
 Whatever you want. A few patterns we use:
 
 - **Paste `paper.md` into a chat and ask questions.** Better than pasting the PDF because the markdown is already cleaned. Way better than nothing.
-- **Attach `paper.md` + `context_packet.json` together.** The packet tells the LLM what's on each page, so when you ask "explain Algorithm 1," the model can find it.
+- **Attach `paper.md` + `context-packet.json` together.** The packet tells the LLM what's on each page, so when you ask "explain Algorithm 1," the model can find it.
 - **Attach individual page PNGs for math-heavy questions.** "Translate equation (11) to NumPy" works much better when you also attach `page_0005.png` showing the equation in its rendered 2D form.
 - **Keep the bundle and reuse it.** Re-parsing a PDF every time you start a new chat is wasteful. The artifact bundle is small and stable.
 
@@ -67,20 +65,25 @@ We do not know if this consistently produces better AI-assisted research than pa
 
 ## Known caveats
 
-- **Section hierarchy.** Docling labels every heading `level: 1`, mislabels the paper title as a section header, and treats `Algorithm N` blocks as sections. A sanity pass fixes the common cases (Roman/Arabic numbering, letter sub-sections, REFERENCES). Papers that don't use those conventions fall back to "trust Docling and hope."
-- **Abstracts aren't labeled.** Docling doesn't tag abstracts; we synthesize one from "everything between the title and the first numbered section." Works for IEEE/Springer/NeurIPS layouts. Fails on novel layouts.
-- **Scanned PDFs.** Auto-OCR fires when the PDF has no text layer (chars-per-page < 100). Works in theory; we haven't tested it hard. If your scanned PDF produces empty markdown, that's why.
+- **Section hierarchy.** Docling labels every heading `level: 1`, mislabels the paper title as a section header, and treats `Algorithm N` blocks as sections. No automatic correction is applied.
+- **Abstracts aren't labeled.** Docling doesn't tag abstracts; no synthesis is attempted.
+- **Scanned PDFs.** No auto-OCR. If your PDF has no text layer, you must pass `--ocr true` manually.
 - **Quality gates report warnings, not failures, by default.** We've been burned by gates that claim everything's fine when it isn't. Treat them as hints.
 - **No per-claim confidence scores.** Docling exposes some per-block confidence, but inconsistently. Don't expect calibrated uncertainty.
 
 ## Pipeline (for contributors)
 
-```text
-PDF → Docling parse → normalize → section sanity pass → context packet
-                  ↘ PyMuPDF rasterize pages
-                  ↘ PyMuPDF text-layer check (OCR decision)
+```
+PDF → Docling parse → normalize → context packet
+              ↘ PyMuPDF rasterize pages
 ```
 
 The interesting code is in `src/02-clean.py` and `src/03-packet.py` — that's where parser quirks get fixed. Docling does the heavy lifting; we clean up after it.
 
-Detailed schemas, contracts, and stage-by-stage behavior live in [`spec.md`](spec.md). This README is the user-facing overview; the spec is what you read if you're building or modifying the tool.
+Detailed schemas, contracts, and stage-by-stage behavior live in [`spec/spec.md`](spec/spec.md). This README is the user-facing overview; the spec is what you read if you're building or modifying the tool.
+
+## Future work
+
+- **Texify sidecar.** Run Texify on equation crops when Docling formula enrichment fails.
+- **Better math extraction.** Dedicated math model for complex formulas.
+- **Equation numbering.** Extract/normalize equation numbers from Docling output.
