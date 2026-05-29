@@ -9,7 +9,7 @@ version = "0.1.0"
 check = "python -m py_compile src/*.py src/parsers/*.py"
 
 # QC: verify enrichment output
-qc = { cmd = "bash src/qc-enrichment.sh $1", description = "Verify enrichment output in a run directory" }
+qc = { cmd = "bash scripts/qc-enrichment.sh $1", description = "Verify enrichment output in a run directory" }
 
 # Test: run Texify on equation crops for ground truth comparison
 test-texify = { cmd = "python tests/texify_test.py", description = "Run Texify inference on equation crops" }

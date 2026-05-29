@@ -19,7 +19,7 @@ crops_dir = Path("runs/slurm-foffano-true/visuals/equations")
 
 if not crops_dir.exists():
     print(f"ERROR: crops directory not found: {crops_dir}")
-    print("Run the SLURM job first: sbatch slurm/foffano-fe-on.sh")
+    print("Run the SLURM job first: sbatch scripts/foffano-fe-on.sh")
     exit(1)
 
 # Clean baseline + the two known-broken equations from the QC run

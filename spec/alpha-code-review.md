@@ -41,7 +41,7 @@ grep -R "_01_parse\|generate_summary\|consolidate_text\|context_packet\|quality_
 - `tests/` — old `artifacts/`/`outputs/` layout, `translation.md`, etc. `QUESTION: keep as historical or remove?`
 - `runs/foffano-run/`, `runs/cortes-run/` — old layout (`debug/equations/eq-001.png` not `visuals/equations/equation_001.png`). `QUESTION: regenerate, mark historical, or move?`
 - `runs/test-fe-on/` — partial. Likely `FIX: delete`.
-- `qc-enrichment.sh` exists in both `src/` and `scripts/`; pixi `qc` task points at `src/`. `FIX: delete duplicate`.
+- `qc-enrichment.sh` canonical location should be `scripts/`; remove duplicates if they reappear.
 
 ---
 
@@ -143,11 +143,11 @@ All runnable scripts use `true/false`. Spec enhancement docs may still have `on/
 
 ---
 
-## 7. Pixi / scripts / Slurm
+## 7. Pixi / scripts / SLURM wrappers
 
 - **`pixi.toml`:** every task points at a real script. No references to deleted files. `test-texify` is experimental. `clean` not aggressive (`QUESTION`).
 - **`scripts/run-*.sh`:** each calls `src/process-pdf.py` with correct asset path, `--out` matching script name, `--formula-enrichment true/false` matching `-fe-on`/`-fe-off`. No unsupported flags.
-- **`slurm/*.sh`:** 8 scripts (foffano/cortes/mishmast/nikishin × on/off). Each calls matching `scripts/run-*.sh`. Resource requests sane.
+- **`scripts/*-fe-*.sh` (SLURM wrappers):** 8 scripts (foffano/cortes/mishmast/nikishin × on/off). Each calls matching `scripts/run-*.sh`. Resource requests sane.
 
 ---
 
@@ -218,7 +218,7 @@ Check: deliverables non-empty, page PNGs match page count, `visuals/equations/eq
 4. Stage 03
 5. Wrapper
 6. Cross-cutting
-7. Pixi/scripts/slurm
+7. Pixi/scripts/SLURM wrappers
 8. Specs/README
 9. Non-goals
 10. Deferred work
@@ -249,13 +249,13 @@ Skip OK. Give file paths and exact mismatches for FIX/QUESTION.
 
 ### Blockers
 
-- **`--code-enrichment` missing from `process-pdf.py` and `01-parse.py` argparse.** Every `scripts/run-*.sh` and every slurm job passes `--code-enrichment false` → subprocess crash. Fix: add arg to both argparse blocks; pass through to `DoclingParser` (even as no-op).
+- **`--code-enrichment` missing from `process-pdf.py` and `01-parse.py` argparse.** Every `scripts/run-*.sh` and every SLURM wrapper script passes `--code-enrichment false` → subprocess crash. Fix: add arg to both argparse blocks; pass through to `DoclingParser` (even as no-op).
 
 ### FIX (must resolve before alpha)
 
 - `src/parsers/mineru_parser.py` — only raises `NotImplementedError`. Delete.
 - `src/__pycache__/` and `src/parsers/__pycache__/` — stale `.pyc` from deleted scripts (`consolidate_text`, `generate_summary`, `generate_translation`, `normalize`, `section_sanity`, `_01_parse`, etc.). `rm -rf` both. Add `**/__pycache__/` and `**/*.pyc` to `.gitignore`.
-- `scripts/qc-enrichment.sh` — duplicates `src/qc-enrichment.sh` and has a bash/Python f-string bug (`$failures` unquoted). Delete `scripts/` copy; `pixi qc` already points at `src/`.
+- `qc-enrichment.sh` duplication/bug note (historical): keep single canonical script under `scripts/` and keep pixi task pointing at `scripts/qc-enrichment.sh`.
 - `common.py`: `shutil` imported, never used. Remove.
 - `02-clean.py` figures extractor: dead `image_path = None` assignment before the try block (immediately overwritten in fig_entry). Remove.
 - `MANIFEST.md` template in `03-packet.py`: `Math is {math_status} depending on whether formula enrichment was on.` renders awkwardly with the variable filled in. Pick one branch: `"Math is LaTeX."` or `"Math is Unicode (formula enrichment was off)."` — not both joined.
@@ -292,7 +292,7 @@ Skip OK. Give file paths and exact mismatches for FIX/QUESTION.
 - `_bbox_to_pixels()` handles `BOTTOMLEFT`/`TOPLEFT`, padding, clamping correctly.
 - `write_quality_report()` uses real existence checks — no hardcoded `True`.
 - `setup_logging()` correct: stdout + append to `debug/run.log`, noisy libs suppressed.
-- All slurm scripts call correct `scripts/run-*.sh` counterparts.
-- `pixi qc` task points at correct (`src/`) qc script.
+- All SLURM wrapper scripts call correct `scripts/run-*.sh` counterparts.
+- `pixi qc` task points at correct (`scripts/`) qc script.
 - README: no `--cache`, no `--fail-on-low-quality`, no auto-OCR claims, correct output paths.
 - `spec.md` output tree, stage responsibilities, quality gates match code.
