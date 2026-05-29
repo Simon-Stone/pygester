@@ -7,4 +7,4 @@
 #SBATCH --mail-type=BEGIN,END,FAIL
 
 cd "$SLURM_SUBMIT_DIR"
-pixi run ./scripts/run-nikishin-fe-off.sh false
+./scripts/run-nikishin-fe-off.sh false

@@ -29,7 +29,7 @@ class DoclingParser:
             from docling.document_converter import DocumentConverter, PdfFormatOption
         except Exception as exc:  # pragma: no cover
             raise RuntimeError(
-                "Docling not installed. Run `pixi install` then retry."
+                "Docling not installed. Run `uv sync` then retry."
             ) from exc
 
         pipeline_options = PdfPipelineOptions()

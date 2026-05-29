@@ -1,4 +1,5 @@
-# pixi environments
-.pixi/*
-!.pixi/config.toml
+# uv virtual env
+.venv/
+
+# runtime outputs
 runs/*

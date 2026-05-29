@@ -22,12 +22,14 @@ That's the whole tool.
 ```bash
 git clone <repo>
 cd digest-technical-paper
-pixi install            # or: pip install -r src/requirements.txt
+uv sync
 
-python src/process-pdf.py path/to/paper.pdf --out run/
+uv run python src/process-pdf.py path/to/paper.pdf --out run/
 ```
 
 Outputs land directly in `--out` directory. Intermediate artifacts in `debug/`. Both gitignored.
+
+Task runner uses `just` (see `justfile`). Example: `just check`, `just qc runs/slurm-foffano-fe-on`.
 
 Useful flags:
 
