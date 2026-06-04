@@ -1,0 +1,287 @@
+[
+  {
+    "id": "eq-001",
+    "page": 2,
+    "bbox": [
+      376.0170000000002,
+      608.3374885475519,
+      558.0008580000004,
+      645.1412420000014
+    ],
+    "latex": "min θ E s,a,s ′ [ ‖ f θ ( s, a ) -s ′ ‖ 2 ] , min θ E s,a,r [ ( r θ ( s, a ) -r ) 2 ] . (1)",
+    "image_path": "visuals/equations/equation_001.png",
+    "number": null,
+    "section_id": "sec-005",
+    "preceding_prose": "Model-based RL methods typically train a model ( p θ , r θ ) and use it for policy or value learning. Traditional methods based on Dyna (Sutton 1991) rely on maximum likelihood estimation (MLE) of model parameters θ . For example, if the true model is assumed to be Gaussian with a parameterized mean ( f θ , r θ ) and a fixed variance, maximizing the likelihood is equivalent to minimizing the mean squared error of the prediction, namely, to solving"
+  },
+  {
+    "id": "eq-002",
+    "page": 2,
+    "bbox": [
+      347.81000000000046,
+      454.5664885475504,
+      558.0008580000001,
+      516.4752500000017
+    ],
+    "latex": "max Q,θ J ( π Q ) s.t. Q ( s, a ) = B θ Q ( s, a ) ∀ s ∈ S , a ∈ A , where π Q ( a | s ) = exp Q ( s, a ) ∑ a ′ exp Q ( s, a ′ ) . (2)",
+    "image_path": "visuals/equations/equation_002.png",
+    "number": null,
+    "section_id": "sec-006",
+    "preceding_prose": "Consider a modification of the original RL problem statement, which was first proposed by Rust (1988) and revisited by Bacon et al. (2019). In addition to maximizing the expected returns J , we introduce a constraint forcing the action value function Q to satisfy the Bellman equation induced by the model. The optimization problem becomes"
+  },
+  {
+    "id": "eq-003",
+    "page": 2,
+    "bbox": [
+      322.20400000000006,
+      392.5186914336283,
+      558.0008579999999,
+      425.13451999999995
+    ],
+    "latex": "B θ Q ( s, a ) ≜ r θ ( s, a ) + γ E p θ ( s ′ | s,a ) log ∑ a ′ exp Q ( s ′ , a ′ ) . (3)",
+    "image_path": "visuals/equations/equation_003.png",
+    "number": null,
+    "section_id": "sec-006",
+    "preceding_prose": "B θ here is the soft Bellman optimality operator with respect to the model parameters θ :"
+  },
+  {
+    "id": "eq-004",
+    "page": 2,
+    "bbox": [
+      387.0889999999999,
+      221.19948854755023,
+      558.0008579999999,
+      234.90724199999977
+    ],
+    "latex": "θ ϕ - → Q ∗ exp - - → π Q ∗ act - → J. (4)",
+    "image_path": "visuals/equations/equation_004.png",
+    "number": null,
+    "section_id": "sec-006",
+    "preceding_prose": "Suppose there exists an implicit function ϕ ( θ ) = Q ∗ that takes as input a model and outputs a Q-function that satisfies the constraint in (2). The sequence of transformations from the model parameters to the agent's performance can be described then using the following graph:"
+  },
+  {
+    "id": "eq-005",
+    "page": 2,
+    "bbox": [
+      366.07699999999994,
+      114.97460474336276,
+      558.000858,
+      153.90024199999993
+    ],
+    "latex": "∂J ( θ ) ∂θ = ∂J ( π ) ∂π ︸ ︷︷ ︸ PG · ∂π ( Q ∗ ) ∂Q ∗ ︸ ︷︷ ︸ softmax · ∂ϕ ( θ ) ∂θ ︸ ︷︷ ︸ IFT . (5)",
+    "image_path": "visuals/equations/equation_005.png",
+    "number": null,
+    "section_id": "sec-006",
+    "preceding_prose": "In Section 4.1, we show how ∂ϕ ( θ ) ∂θ can be calculated using the implicit function theorem (IFT). Since ∂J ( π ) ∂π can be calculated using the policy gradient theorem (Sutton et al. 1999), we can apply automatic differentiation to calculate the gradient with respect to θ :"
+  },
+  {
+    "id": "eq-006",
+    "page": 3,
+    "bbox": [
+      83.73399999999997,
+      569.6492500000005,
+      292.500858,
+      608.7545200000005
+    ],
+    "latex": "min Q,θ L true ( Q ) ≜ ∑ s,a ( Q ( s, a ) -BQ ( s, a )) 2 , s.t. Q ( s, a ) = B θ Q ( s, a ) ∀ s ∈ S , a ∈ A , (6)",
+    "image_path": "visuals/equations/equation_006.png",
+    "number": null,
+    "section_id": "sec-006",
+    "preceding_prose": "The optimization problem (2) suggests that OMD is a policy-based method (Sutton et al. 1999). However, we can make it a value-based approach (Watkins and Dayan 1992) by replacing the objective J ( π Q ) with the Bellman error:"
+  },
+  {
+    "id": "eq-007",
+    "page": 3,
+    "bbox": [
+      64.84399999999997,
+      292.4708135072046,
+      292.50085799999994,
+      317.953242
+    ],
+    "latex": "∂ϕ ( θ ) ∂θ = -( ∂f ( θ, w ∗ ) ∂w ) -1 · ∂f ( θ, w ∗ ) ∂θ ∣ ∣ ∣ w ∗ = ϕ ( θ ) . (7)",
+    "image_path": "visuals/equations/equation_007.png",
+    "number": null,
+    "section_id": "sec-007",
+    "preceding_prose": "Theorem 1. (Cauchy, Implicit Function) Let f : Θ × W → W be a continuously differentiable function and ( ˜ θ, ˜ w ) be a point satisfying f ( ˜ θ, ˜ w ) = 0 . If the Jacobian ∂f ( ˜ θ, ˜ w ) ∂w is invertible, then there exists an open set U ⊆ Θ containing ˜ θ and a unique continuously differentiable function ϕ such that ϕ ( ˜ θ ) = ˜ w and f ( θ, ϕ ( θ )) = 0 for all θ ∈ U . Moreover,"
+  },
+  {
+    "id": "eq-008",
+    "page": 3,
+    "bbox": [
+      384.1790000000001,
+      261.86169143362827,
+      558.000858,
+      288.6945199999999
+    ],
+    "latex": "θ = { κ ‖ θ ‖ θ if ‖ θ ‖ > κ, θ if ‖ θ ‖ ≤ κ . (8)",
+    "image_path": "visuals/equations/equation_008.png",
+    "number": null,
+    "section_id": "sec-008",
+    "preceding_prose": "For OMD, we obtain the gradient of J with respect to θ using the expression (5). We then apply the projected gradient ascent where after each step we make a projection on a space of bounded parameters via"
+  },
+  {
+    "id": "eq-009",
+    "page": 3,
+    "bbox": [
+      331.815,
+      194.22048854755042,
+      544.4806439999999,
+      222.570242
+    ],
+    "latex": "DKL ( p || p θ ) = 1 |S| · |A| ∑ s,a,s ′ p ( s ′ | s, a ) log p ( s ′ | s, a ) p θ ( s ′ | s, a )",
+    "image_path": "visuals/equations/equation_009.png",
+    "number": null,
+    "section_id": "sec-008",
+    "preceding_prose": "Finding an MLE solution corresponds to minimizing the average KL divergence"
+  },
+  {
+    "id": "eq-010",
+    "page": 4,
+    "bbox": [
+      84.76100000000002,
+      429.69625000000053,
+      292.500858,
+      442.7090230000005
+    ],
+    "latex": "B θ Q ∗ ( s, a ) = B θ ′ Q ∗ ( s, a ) ∀ s ∈ S , a ∈ A . (9)",
+    "image_path": "visuals/equations/equation_010.png",
+    "number": null,
+    "section_id": "sec-010",
+    "preceding_prose": "Definition 1 (Optimal value equivalence) . Let Q ∗ be an optimal action-value function for the unconstrained RL problem. Models with parameters θ and θ ′ are Q ∗ -equivalent if"
+  },
+  {
+    "id": "eq-011",
+    "page": 4,
+    "bbox": [
+      69.70300000000003,
+      225.777488547551,
+      292.5003579999999,
+      253.2212500000005
+    ],
+    "latex": "lim α → 0 α log ∑ a ′ exp 1 α Q ( s ′ , a ′ ) = max a ′ Q ( s ′ , a ′ ) . (10)",
+    "image_path": "visuals/equations/equation_011.png",
+    "number": null,
+    "section_id": "sec-010",
+    "preceding_prose": "This property holds by construction. The optimal Qfunction maximizes the objective in the true MDP. As the log-sum-exp temperature in (3) approaches 0, we recover the 'hard' target in the Bellman optimality operator:"
+  },
+  {
+    "id": "eq-012",
+    "page": 4,
+    "bbox": [
+      336.48999999999955,
+      201.61825,
+      553.953751,
+      224.48772900000017
+    ],
+    "latex": "max s,a ∣ ∣ ∣ Q ∗ ( s, a ) -ˆ Q MLE ( s, a ) ∣ ∣ ∣ ≤ ϵ r 1 -γ + γϵ p r max 2(1 -γ ) 2 ;",
+    "image_path": "visuals/equations/equation_012.png",
+    "number": null,
+    "section_id": "sec-011",
+    "preceding_prose": "Theorem 2. ( Q ∗ approximation error) Let Q ∗ be the optimal action-value function for the true MDP. Let ˆ Q OMD and ˆ Q MLE be the fixed points of the Bellman optimality operators for approximate OMD and MLE models respectively."
+  },
+  {
+    "id": "eq-013",
+    "page": 4,
+    "bbox": [
+      362.891,
+      115.66624999999999,
+      527.5527510000001,
+      138.53572899999995
+    ],
+    "latex": "max s,a ∣ ∣ ∣ Q ∗ ( s, a ) -ˆ Q OMD ( s, a ) ∣ ∣ ∣ ≤ ϵ 1 -γ .",
+    "image_path": "visuals/equations/equation_013.png",
+    "number": null,
+    "section_id": "sec-011",
+    "preceding_prose": "Theorem 2. ( Q ∗ approximation error) Let Q ∗ be the optimal action-value function for the true MDP. Let ˆ Q OMD and ˆ Q MLE be the fixed points of the Bellman optimality operators for approximate OMD and MLE models respectively."
+  },
+  {
+    "id": "eq-014",
+    "page": 5,
+    "bbox": [
+      60.40100000000001,
+      257.4574885475504,
+      292.50035799999995,
+      273.643242
+    ],
+    "latex": "min w L ( θ, w ) ≜ min w E s,a [ Q w ( s, a ) -B θ Q ¯ w ( s, a )] 2 , (11)",
+    "image_path": "visuals/equations/equation_014.png",
+    "number": null,
+    "section_id": "sec-012",
+    "preceding_prose": "Q-network. We use a neural network with parameters w to approximate the Q-values. The network is trained to minimize the Bellman error induced by the model θ :"
+  },
+  {
+    "id": "eq-015",
+    "page": 5,
+    "bbox": [
+      143.78300000000002,
+      83.1168135072046,
+      292.50035799999995,
+      106.06425000000002
+    ],
+    "latex": "∂L ( θ, w ) ∂w = 0 . (12)",
+    "image_path": "visuals/equations/equation_015.png",
+    "number": null,
+    "section_id": "sec-012",
+    "preceding_prose": "Constraint. The constraint in (2) and (6) should be satisfied for all state-action pairs making it impractical for nontabular MDPs. We introduce an alternative but similar constraint, the first-order optimality condition for minimizing the Bellman error (11):"
+  },
+  {
+    "id": "eq-016",
+    "page": 5,
+    "bbox": [
+      353.738,
+      332.9964885475504,
+      558.0003580000001,
+      344.69924199999997
+    ],
+    "latex": "L true ( w ) ≜ E s,a [ Q w ( s, a ) -BQ ¯ w ( s, a )] 2 , (13)",
+    "image_path": "visuals/equations/equation_016.png",
+    "number": null,
+    "section_id": "sec-013",
+    "preceding_prose": "Objective. We consider the problem (6) and use the Bellman error as the outer loop objective:"
+  },
+  {
+    "id": "eq-017",
+    "page": 5,
+    "bbox": [
+      322.1450000000002,
+      270.8404885475504,
+      555.338395,
+      293.93451999999996
+    ],
+    "latex": "BQ ¯ w ( s, a ) ≜ r ( s, a ) + γ E p ( s ′ | s,a ) log ∑ a ′ exp Q ¯ w ( s ′ , a ′ ) .",
+    "image_path": "visuals/equations/equation_017.png",
+    "number": null,
+    "section_id": "sec-013",
+    "preceding_prose": "where B , again, is a soft Bellman operator induced by the true reward r and dynamics p :"
+  },
+  {
+    "id": "eq-018",
+    "page": 5,
+    "bbox": [
+      331.79299999999967,
+      129.44560474336276,
+      558.000358,
+      166.43424200000004
+    ],
+    "latex": "∂L true ( θ ) ∂θ ≈ -∂L true ( w ∗ ) ∂w ︸ ︷︷ ︸ grad Bellman · ∂ 2 L ( θ, w ∗ ) ∂θ∂w ︸ ︷︷ ︸ approx IFT ∣ ∣ ∣ w ∗ = ϕ ( θ ) (14)",
+    "image_path": "visuals/equations/equation_018.png",
+    "number": null,
+    "section_id": "sec-013",
+    "preceding_prose": "Resulting gradient. The Q function and IFT approximations result in the following gradient with respect to θ :"
+  },
+  {
+    "id": "eq-019",
+    "page": 6,
+    "bbox": [
+      68.005,
+      227.28848854755051,
+      292.50035799999995,
+      251.782242
+    ],
+    "latex": "ℓ VEP ( θ ) = ∑ π ∈ Π ∑ V ∈V ∑ s ∈S ( B π V ( s ) -B θ π V ( s ) ) 2 , (15)",
+    "image_path": null,
+    "number": null,
+    "section_id": "sec-014",
+    "preceding_prose": "Setup . We first use CartPole (Barto, Sutton, and Anderson 1983) and later include results on MuJoCo HalfCheetah (Todorov, Erez, and Tassa 2012) with similar findings further supporting our conclusions. Since OMD learns one of the Q ∗ -equivalent models as shown in Section 5.1, a close non-MLE baseline would be the algorithm used in the value equivalence principle (VEP) paper (Grimm et al. 2020). The VEP model minimizes the difference between the Bellman operators:"
+  }
+]

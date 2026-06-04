@@ -8,8 +8,8 @@ sync:
 check:
     uv run python -m py_compile src/*.py src/parsers/*.py
 
-# Verify enrichment output in run directory
-qc run_dir:
+# Verify enrichment output in run directory (this will likley have been run on the ) server and need to be synced
+qc-enrichment run_dir:
     bash scripts/qc-enrichment.sh {{run_dir}}
 
 # Run Texify inference on equation crops
@@ -34,12 +34,12 @@ watch:
 
 # Cleanup generated runs
 clean:
-    rm -rf run run-foffano run-cortes runs
+    rm -rf testrun run-foffano run-cortes runs
 
 # Test minimal pipeline: parse only, no enrichment (fast)
-local-basic-test pdf='assets/Foffano et al. - 2023 - Conformal Off-Policy Evaluation in Markov Decision Processes.pdf':
+local-basic-test pdf='assets/Nikishin et al. - 2022 - Control-Oriented Model-Based Reinforcement Learning with Implicit Differentiation.pdf':
     uv run python src/process-pdf.py '{{pdf}}' \
-      --out run/basic-test \
+      --out testrun/basic-test \
       --formula-enrichment false \
       --ocr false \
       --max-pages 5

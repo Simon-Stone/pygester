@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "status": "warn",
+  "gates": {
+    "paper_md_exists": true,
+    "has_references_section": false,
+    "raster_page_count_ok": true,
+    "technical_summary_exists": true,
+    "technical_summary_has_equations": true
+  },
+  "section_count": 18,
+  "figure_count": 7,
+  "table_count": 1,
+  "equation_count": 19,
+  "reference_count": 0,
+  "technical_summary_exists": true,
+  "technical_summary_has_equations": true,
+  "counts": {
+    "equations_in_technical_summary": 19
+  }
+}

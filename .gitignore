@@ -2,4 +2,8 @@
 .venv/
 
 # runtime outputs
+run/*
 runs/*
+assets/*.pdf
+!assets/Nikishin et al. - 2022 - Control-Oriented Model-Based Reinforcement Learning with Implicit Differentiation.pdf
+!assets/Cortes-Gomez et al. - 2025 - Utility-Directed Conformal Prediction A Decision-Aware Framework for Actionable Uncertainty Quantif.pdf

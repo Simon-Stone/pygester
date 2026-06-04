@@ -1,279 +1,116 @@
-# digest-technical-paper — Spec
+# Project Specification
 
-## What this is
+This tool prepares a scientific paper (PDF) for AI-assisted analysis by producing a structured "context packet" and associated visual artifacts. It is an opinionated bundle producer that transforms a raw PDF into a set of machine-readable and human-verifiable artifacts.
 
-A Docling wrapper. Takes a scientific PDF and produces a clean bundle of `(paper.md, page PNGs, context-packet.json)` for AI workflows. Augments Docling's defaults with page rasterization and a curated metadata sidecar, but does not reinvent any of the parsing.
+## Core Philosophy
+- **Faithfulness to Parser**: We trust the parser (Docling) to define the document structure. We do not demote, promote, or "fix" section headings.
+- **Visual Ground Truth**: Every structured artifact (equation, figure, code block) is paired with a raster crop from the original PDF to allow instant visual verification.
+- **No LLM in the Loop**: The pipeline is purely deterministic and requires no API keys. It prepares inputs *for* LLM workflows run elsewhere.
+- **Reproducibility**: Every run records its provenance (input SHA, tool versions, CLI flags) in a manifest.
 
-Built by an academic for personal use. Not a product.
-
-## The deal
-
-```
-PDF  ──Docling──>  paper.md   (markdown, optionally enriched with LaTeX/code)
-PDF  ──PyMuPDF──>  pages/*.png  (one image per page)
-both ──our code──>  context-packet.json  (sections, figures, tables, equations, references, provenance)
-```
-
-That's the whole tool.
-
-## What "enrichment" means
-
-Docling does layout detection by default — it finds blocks and labels them (text, picture, formula, table, code). Enrichment is optional extra model passes that fill in the *content* of those blocks beyond layout:
-
-- **Formula enrichment**: for blocks tagged `formula`, run a vision model that outputs LaTeX. Without this, equations come through as flattened Unicode soup.
-- **Code enrichment**: for blocks tagged `code` (pseudocode, snippets), run a model that extracts clean text and tags the programming language.
-- **OCR**: for PDFs with no text layer, run an OCR engine. Not needed for modern native-text papers.
-
-Each enrichment is a separate model load and inference pass. They're slow. They're off by default.
-
-## Defaults and toggles
-
-Defaults favor **fast triage**: no enrichment, no OCR. A run takes seconds, math is degraded to Unicode, code blocks may be noisy. Good enough for "give me 5 papers as markdown so I can skim them with an LLM."
-
-For a "deep read" workflow, opt in:
-
-```bash
-python src/process-pdf.py paper.pdf --out runs/foo \
-  --formula-enrichment true
-```
-
-A deep-read run takes minutes (multiple model loads + per-block inference) but produces LaTeX math in `paper.md`.
-
-All toggles are recorded in the run manifest so any output is reproducible from its config.
-
-## Scripts (and order)
-
-Three numbered scripts. Each is runnable standalone for debugging; `process-pdf.py` runs them all in order.
-
-```
-01-parse.py     # PDF → Docling raw outputs + page PNGs
-02-clean.py     # Docling outputs → cleaned markdown + structured sidecars
-03-packet.py    # all artifacts → context-packet.json
-process-pdf.py  # runs 01 → 02 → 03 in order
-```
-
-## CLI
-
-```bash
-python src/process-pdf.py INPUT.pdf --out OUT_DIR [flags]
-```
-
-Flags:
-
-| Flag | Default | Effect |
-|---|---|---|
-| `--formula-enrichment {true,false}` | false | Docling formula → LaTeX. Costs minutes per paper. |
-| `--ocr {true,false}` | false | Docling OCR. Native-text PDFs don't need it. |
-| `--max-pages N` | none | Process only first N pages (testing). |
-| `--dpi N` | 200 | Page raster DPI. |
-
-**Output directory handling:**
-- `OUT_DIR` is created if it doesn't exist (`mkdir -p`)
-- All subdirectories (`pages/`, `visuals/`, `debug/`, etc.) are created on-demand before writes
-- Stage checkpoints: if an output file exists, the stage is skipped (enables resume from crash)
-
-Exit codes:
-
-- `0` — success
-- Non-zero — any error (wrapper uses `subprocess.run(check=True)`)
-
-## Outputs
-
-Deliverables are at the top of `OUT_DIR/`. Everything else is debug plumbing, tucked under `debug/`.
-
-```
-OUT_DIR/
-├── MANIFEST.md               # auto-generated; explains every file in this directory
-├── paper.md                  # cleaned markdown, post-processed Docling
-├── context-packet.json       # structured sidecar
-├── quality-report.json       # which gates passed, what's missing
-├── pages/                    # one image per page
-│   └── page_0001.png …
-├── visuals/                  # per-block crops (equations, figures)
-│   ├── equations/
-│   │   ├── equations.json
-│   │   └── equation_NNN.png …
-│   └── figures/
-│       ├── figures.json
-│       └── figure_NNN.png …
-├── tables/                   # extracted tables (when present)
-│   └── tables.json
-├── references/               # extracted references (when present)
-│   └── references.json
-├── paper-text.md             # cleaned canonical text (no markdown)
-└── debug/                    # intermediate artifacts
-    ├── original.pdf          # verbatim copy of input
-    ├── run-manifest.json     # config, flags, hashes, timestamps
-    ├── run.log               # pipeline log
-    ├── sections.json         # section tree (already in context-packet)
-    ├── parser/
-    │   ├── raw_output.json   # Docling DoclingDocument as JSON (large)
-    │   └── raw_output.md     # Docling markdown export, pre-cleanup
-    └── markdown/             # intermediate snapshots from Stage 02 post-processing
-        └── 01-with-frontmatter.md …
-```
-
-Deliverables (the top of `OUT_DIR/`) use kebab-case. Debug files keep snake_case (Docling convention).
-
-### MANIFEST.md
-
-Auto-generated at the end of every run. Plain English, written so a future-you or a collaborator opening the directory understands what each file is for without reading the spec.
-
-Template:
-
-```markdown
-# Run manifest
-
-This directory contains the output of `digest-technical-paper` processing
-`<source filename>`.
-
-Tool version: `<version>` · Run at: `<ISO timestamp>` · Flags: `<flag summary>`
-
-## What's in here
-
-### Deliverables (the things you probably want)
-
-- **`paper.md`** — the paper as cleaned markdown. Section structure preserved.
-  Math is <Unicode soup | LaTeX> depending on whether formula enrichment was on.
-- **`context-packet.json`** — structured metadata: sections with page ranges,
-  figures, tables, equations, references. The thing to paste alongside `paper.md`
-  when an LLM needs to know what's on each page.
-- **`visuals/`** — per-block crops: `equations/`, `figures/`, `code/`. Each has
-  a JSON manifest plus PNG crops. Visual ground truth for verification.
-- **`tables/`** — extracted tables as JSON (if any found).
-- **`references/`** — extracted references as JSON (if any found).
-- **`quality-report.json`** — quick summary of what's populated and what failed.
-  Glance at this if `paper.md` looks weird.
-
-### Debug
-
-Everything under `debug/` is plumbing — intermediate artifacts that exist so a
-future debugger can trace what each stage did. You can ignore these unless
-something's wrong.
-
-- `debug/original.pdf` — the input, copied here so the run is self-contained.
-- `debug/run-manifest.json` — full config: every flag, parser version, hashes,
-  per-stage timing.
-- `debug/parser/raw_output.{json,md}` — what Docling produced before our post-
-  processing. Compare against `paper.md` to see what Stage 02 changed.
-- `paper-text.md` — canonical text without markdown formatting.
-  Redundant with `paper.md` for most uses.
-- `debug/markdown/` — intermediate snapshots from the markdown post-processing
-  chain. `01-with-frontmatter.md` is what `paper.md` looks like after only
-  the first post-processing step, and so on.
-
-Artifacts that were previously under `debug/` (`figures.json`, `tables.json`,
-`equations.json`, `references.json`) now live at the top level (`visuals/`,
-`tables/`, `references/`) when populated.
-
-## What was done to your paper
-
-- Docling version: `<X.Y.Z>`
-- Formula enrichment: `<true|false>` — <"math came through as LaTeX" | "math came through as flattened Unicode">
-- OCR: `<true|false>` — <"OCR ran" | "OCR skipped; PDF had a usable text layer">
-- Pages processed: `<N>`
-- Sections detected: `<N>`
-- Figures detected: `<N>`
-- Tables detected: `<N>`
-- Equations detected: `<N>`
-
-## Quality gates
-
-<list of gates with ✓/✗ and short notes; mirror of quality-report.json>
-
-## Reproducing this run
-
-```bash
-python src/process-pdf.py "<source filename>" --out <OUT_DIR> <flags>
-```
-```
-
-The template is interpolated at write time. Conditional bits in `<angle brackets>` are filled in based on what actually happened.
-
-`MANIFEST.md` is informational. Nothing in the pipeline reads it. It exists for the human who opens the folder a month later wondering what they were looking at.
-
-## Stages
+## Pipeline Stages
 
 ### Stage 01 — Parse
+Extracts raw content and rasterizes pages.
+- **Inputs**: PDF file.
+- **Process**:
+    - Invokes Docling to produce a structured JSON representation of the document.
+    - Rasterizes all pages to PNGs at a specified DPI (default 200).
+- **Outputs**:
+    - `debug/original.pdf`: Copy of source.
+    - `debug/parser/raw_output.json`: Docling's structured output.
+    - `debug/parser/raw_output.md`: Docling's markdown export.
+    - `pages/page_NNNN.png`: Full-page rasters.
+    - `debug/run-manifest.json`: Detailed run provenance.
 
-Run Docling with the configured toggles. Rasterize page PNGs via PyMuPDF.
-
-Writes `debug/parser/`, `pages/`, initial `debug/run-manifest.json`.
-
-### Stage 02 — Clean
-
-Translate Docling's output into the internal artifact schema and produce `paper.md`.
-
-Cleanup steps applied to canonical text and markdown:
-
-- Normalize ligatures (`ﬁ→fi`, `ﬂ→fl`, etc.)
-- Preserve em-dashes and math symbols verbatim
-- Rejoin words split by line-end hyphens (when the joined form is a real word)
-- Drop `page_header` and `page_footer` blocks (IEEE running headers, page numbers)
-- Preserve LaTeX from formula enrichment verbatim
-
-`paper.md` is produced by post-processing `debug/parser/raw_output.md` (Docling's markdown export). We do not rebuild from scratch — Docling's structure is faithful to the paper and we trust it. The post-processing steps are:
-
-1. Prepend YAML frontmatter (source SHA, parser version, tool version, run timestamp, flags used)
-2. Save the intermediate result to `debug/markdown/01-with-frontmatter.md`
-3. Apply any future post-processing steps as numbered intermediates
-4. Copy the final result to `paper.md`
-
-If only step 1 fires, `01-with-frontmatter.md` and `paper.md` are identical (modulo path). That's fine. The numbered intermediates exist so a future debugger can see what each step did.
-
-We do **not** demote, promote, classify, or "fix" Docling's section headings. If Docling calls `Algorithm 1` a section, it stays a section. If Docling tags the paper title as `section_header`, it stays an H1 in the markdown. The tool is faithful to Docling's choices.
-
-Stage 02 also produces the structured sidecars: `sections.json`, `figures.json`, `tables.json`, `equations.json`, `references.json`. Each is best-effort based on what Docling provides; empty lists are valid outputs when Docling found nothing.
+### Stage 02 — Clean & Extract
+Processes the raw output into clean markdown and visual crops.
+- **Inputs**: `raw_output.json`, `raw_output.md`, page PNGs.
+- **Process**:
+    - **Markdown Post-processing**: 
+        - Normalizes ligatures, preserves math symbols, rejoins hyphenated words.
+        - Drops page headers/footers.
+        - Prepends YAML frontmatter.
+    - **Visual Extraction**:
+        - Walks the Docling AST to find equations, figures, and code blocks.
+        - For each block, crops the corresponding page PNG using the provided bbox.
+        - Saves crops to `visuals/` (e.g., `visuals/equations/equation_001.png`).
+    - **Sidecar Generation**:
+        - Writes `equations.json`, `figures.json`, `code.json`, `tables.json`, and `references.json`.
+        - Each entry includes `id`, `page`, `bbox`, `content` (LaTeX/text), and `image_path`.
+- **Outputs**:
+    - `paper.md`: The cleaned, frontmatter-enhanced markdown.
+    - `visuals/`: Directory containing cropped images and their corresponding JSON sidecars.
+    - `tables/tables.json`: Extracted tables.
+    - `references/references.json`: Extracted references.
+    - `debug/intermediate/`: Intermediate text and provenance files.
 
 ### Stage 03 — Packet
+Composes the final handoff bundle.
+- **Inputs**: Artifacts from Stages 01 and 02.
+- **Process**:
+    - **Context Packet**: Aggregates all structured data into `context-packet.json`.
+    - **Technical Summary**: Produces `technical-summary.md` containing the abstract and all equations grouped by section (using LaTeX if enrichment is on).
+    - **Manifest**: Generates a human-readable `MANIFEST.md` explaining the run and deliverables.
+    - **Quality Report**: Refreshes `quality-report.json` with final existence and count checks.
+- **Outputs**:
+    - `context-packet.json`: The primary structured handoff.
+    - `technical-summary.md`: Math-focused summary for LLM pasting.
+    - `MANIFEST.md`: Human-readable explainer.
+    - `quality-report.json`: Final quality gates.
 
-Compose `context-packet.json` from the debug artifacts. The packet is the structured handoff: title, sections with char-offset ranges, figures with captions and image paths, tables, equations with LaTeX and image paths, references, paper provenance, and an evidence index pointing at page PNGs.
-
-Also writes `MANIFEST.md` (auto-generated human-readable explainer; see Outputs section).
-
-## Hard constraints
-
-1. Pure Python via pip. No system CLI dependencies.
-2. Original PDF preserved as source-of-truth artifact.
-3. Pipeline runnable without LLM (no API keys required, ever).
-4. Reproducibility through provenance, not bit-equality. Manifest records input SHA, parser version, parser config, all CLI flags, DPI, tool version, timestamp.
-
-## Quality gates
-
-Written to `quality-report.json`. Each is a bool plus a short note. None block the pipeline by default; they're advisory.
-
-- `paper_md_exists` — `paper.md` exists and non-empty
-- `has_references_section` — at least one reference extracted
-- `raster_page_count_ok` — number of page PNGs matches manifest page count
-
-No `has_abstract` gate (Docling doesn't tag abstracts; we don't try to synthesize one). No `section_hierarchy_consistent` gate (we trust Docling's hierarchy). No `false_positive_demoted` anomalies (we don't demote anything).
-
-## Dependencies
-
+## Deliverables Layout
 ```
-docling>=2.91.0
-PyMuPDF>=1.24.0
-pydantic>=2.8.0
-orjson>=3.10.0
+OUT_DIR/
+├── MANIFEST.md
+├── paper.md
+├── technical-summary.md
+├── context-packet.json
+├── quality-report.json
+├── pages/
+│   └── page_NNNN.png
+├── visuals/
+│   ├── equations/
+│   │   ├── equations.json
+│   │   └── equation_NNN.png
+│   ├── figures/
+│   │   ├── figures.json
+│   │   └── figure_NNN.png
+│   └── code/
+│       ├── code.json
+│       └── code_NNN.png
+├── tables/
+│   └── tables.json
+└── references/
+    └── references.json
 ```
 
-## Caching
+## CLI Interface
+- **Positional**: `pdf_path`
+- **Flags**:
+    - `--out <dir>`: Output directory.
+    - `--formula-enrichment <true|false>`: Use Docling's formula enrichment for LaTeX.
+    - `--code-enrichment <true|false>`: Enable code block extraction and cropping.
+    - `--ocr <true|false>`: Enable OCR for scanned PDFs.
+    - `--max-pages <int>`: Limit processing to N pages.
+    - `--dpi <int>`: Rasterization DPI (default 200).
 
-**Removed.** Stage checkpoints in `process-pdf.py` provide resume-from-crash functionality by checking if output files exist before running each stage. No SHA/flag-based caching.
+## Quality Gates
+Advisory bools in `quality-report.json`:
+- `paper_md_exists`: `paper.md` exists and is non-empty.
+- `has_references_section`: At least one reference was extracted.
+- `raster_page_count_ok`: Number of page PNGs matches manifest page count.
+- `technical_summary_exists`: `technical-summary.md` is non-empty.
+- `technical_summary_has_equations`: Contains at least one equation block.
 
-## What this tool isn't
+## Hard Constraints
+1. **Pure Python**: No system CLI dependencies beyond Python and its packages.
+2. **Source Truth**: Original PDF is preserved as the root artifact.
+3. **No API Keys**: Pipeline is entirely local and deterministic.
+4. **Provenances**: Every run is recorded via SHA and manifest for reproducibility.
 
-- Not an LLM caller. No API keys, no summary generation, no translation. The point is to *prepare* inputs for AI workflows you run elsewhere.
-- Not a parser. Docling does the parsing. We package.
-- Not a research project. No grand evaluation plan, no claim that this beats some baseline. It's an opinionated bundle producer.
-- Not a stable product. Experimental, behaviors and outputs may change.
-
-## Future work
-
-Items deferred:
-
-- **OCR auto-detection.** Currently `--ocr off` is the default; users with a scanned PDF flip it on knowingly. Auto-detect (cheap PyMuPDF text-layer check, override to on when chars/page < 100) is straightforward to add but not needed yet.
-- **Picture description / classification.** Docling supports these enrichments too. Skipped because we already produce page PNGs, which is a more useful artifact than auto-generated captions.
-- **Second parser backend.** If Docling regresses or something better arrives, the parser invocation in `01-parse.py` is localized and can be swapped. No Protocol abstraction needed at this scale.
-- **Bibliography parsing.** Currently `raw` + parsed-by-Docling-if-possible. A proper BibTeX/RIS parser is downstream of this tool.
-- **Batch mode.** `process-pdf.py paper1.pdf paper2.pdf paper3.pdf` for triaging a stack at once. Sensible add when the dev loop demands it.
+## Future Work (Deferred)
+- **Auto-OCR**: Detect if PDF is scanned and flip `--ocr` automatically.
+- **Batch Mode**: Process multiple PDFs in one command.
+- **Texify Fallback**: Use a specialized model to fix malformed LaTeX for specific equations.
+- **Advanced Bibliography**: Full BibTeX/RIS parsing.

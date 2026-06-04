@@ -1,0 +1,128 @@
+[
+  {
+    "id": "sec-001",
+    "heading": "Control-Oriented Model-Based Reinforcement Learning with Implicit Differentiation",
+    "level": 2,
+    "start_char": 5,
+    "end_char": 336
+  },
+  {
+    "id": "sec-002",
+    "heading": "Abstract",
+    "level": 2,
+    "start_char": 336,
+    "end_char": 1224
+  },
+  {
+    "id": "sec-003",
+    "heading": "1 Introduction",
+    "level": 2,
+    "start_char": 1224,
+    "end_char": 4302
+  },
+  {
+    "id": "sec-004",
+    "heading": "2 Related Work",
+    "level": 2,
+    "start_char": 4302,
+    "end_char": 7449
+  },
+  {
+    "id": "sec-005",
+    "heading": "3 Preliminaries",
+    "level": 2,
+    "start_char": 7449,
+    "end_char": 8754
+  },
+  {
+    "id": "sec-006",
+    "heading": "4 Optimal Model Design for Tabular MDPs",
+    "level": 2,
+    "start_char": 8754,
+    "end_char": 11593
+  },
+  {
+    "id": "sec-007",
+    "heading": "4.1 Implicit Differentiation",
+    "level": 2,
+    "start_char": 11593,
+    "end_char": 12659
+  },
+  {
+    "id": "sec-008",
+    "heading": "4.2 Benefits under Model Misspecification",
+    "level": 2,
+    "start_char": 12659,
+    "end_char": 15646
+  },
+  {
+    "id": "sec-009",
+    "heading": "5 Theoretical Analysis",
+    "level": 2,
+    "start_char": 15646,
+    "end_char": 15955
+  },
+  {
+    "id": "sec-010",
+    "heading": "5.1 Optimal Solutions for OMD",
+    "level": 2,
+    "start_char": 15955,
+    "end_char": 18509
+  },
+  {
+    "id": "sec-011",
+    "heading": "5.2 Approximation Bound",
+    "level": 2,
+    "start_char": 18509,
+    "end_char": 20302
+  },
+  {
+    "id": "sec-012",
+    "heading": "6 OMDwith Function Approximation",
+    "level": 2,
+    "start_char": 20302,
+    "end_char": 21384
+  },
+  {
+    "id": "sec-013",
+    "heading": "Algorithm 1: Model Based RL with OMD",
+    "level": 2,
+    "start_char": 21384,
+    "end_char": 23994
+  },
+  {
+    "id": "sec-014",
+    "heading": "7 Experiments with Function Approximation",
+    "level": 2,
+    "start_char": 23994,
+    "end_char": 28903
+  },
+  {
+    "id": "sec-015",
+    "heading": "8 Discussion and Future Work",
+    "level": 2,
+    "start_char": 28903,
+    "end_char": 30303
+  },
+  {
+    "id": "sec-016",
+    "heading": "9 Conclusion",
+    "level": 2,
+    "start_char": 30303,
+    "end_char": 31227
+  },
+  {
+    "id": "sec-017",
+    "heading": "Acknowledgements",
+    "level": 2,
+    "start_char": 31227,
+    "end_char": 31645
+  },
+  {
+    "id": "sec-018",
+    "heading": "References",
+    "level": 2,
+    "start_char": 31645,
+    "end_char": 39918
+  }
+]
