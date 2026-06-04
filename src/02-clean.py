@@ -470,7 +470,6 @@ def clean(out_dir: Path) -> None:
 
     # Write sidecars
     write_json(debug / "sections.json", sections)
-    (out_dir / "paper-text.md").write_text(normalized, encoding="utf-8")
 
     if figures:
         figures_dir = ensure_dir(out_dir / "visuals" / "figures")
