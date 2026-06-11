@@ -1,4 +1,4 @@
-# digest-technical-paper
+# PyGester
 
 A prototype. We're AI-skeptical academic data scientists and engineers who keep ending up using LLMs anyway, so we want to feed them well-prepared inputs instead of raw PDFs and hope.
 
@@ -21,7 +21,7 @@ That's the whole tool.
 
 ```bash
 git clone <repo>
-cd digest-technical-paper
+cd pygester
 uv sync
 
 uv run python src/process-pdf.py path/to/paper.pdf --out run/
@@ -77,7 +77,7 @@ We do not know if this consistently produces better AI-assisted research than pa
 
 ```
 PDF → Docling parse → normalize → context packet
-              ↘ PyMuPDF rasterize pages
+              ↘ PyMuPDF rasterize pagess
 ```
 
 The interesting code is in `src/02-clean.py` and `src/03-packet.py` — that's where parser quirks get fixed. Docling does the heavy lifting; we clean up after it.
